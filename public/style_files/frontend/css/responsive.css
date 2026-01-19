@@ -1,0 +1,437 @@
+@media (max-width: 1023px) {
+    .site_header .navbar-nav {
+        gap: 1rem;
+    }
+
+    .store_details {
+        flex-direction: column;
+    }
+
+    .inner_wrapper {
+        width: 91%;
+    }
+
+    .site_header .navbar #desk_manu {
+        top: 75px;
+    }
+
+    .contact_us .form_warpper .input_con {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+    .breadCrumb {
+        padding: 30px 66px;
+    }
+
+    .about_us .text_img {
+        flex-direction: column;
+    }
+
+    .about_us .our_values .cards_wrapper {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contact_us .our_branches .box_con {
+        grid-template-columns: repeat(3, 207px);
+        padding-right: unset;
+    }
+
+    .contact_us .our_branches .title {
+        width: unset;
+        right: unset;
+    }
+
+    .contact_us .our_branches {
+        right: unset;
+    }
+
+    .news_section .news_con {
+        grid-template-columns: repeat(2, 1fr);
+        padding-right: 66px;
+        grid-column-gap: 2.5rem;
+        width: 91%;
+    }
+
+    .sub_news {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .main_slider {
+        width: 91%;
+    }
+
+    .main_slider .slick-slide .slider_text {
+        right: 4rem;
+    }
+
+    .main_slider::after {
+        display: none;
+    }
+
+    .main_slider .slick-slide .social_media {
+        bottom: 10rem;
+    }
+
+    .custom-dots {
+        top: 175px;
+        left: -6.2rem;
+    }
+
+    .main_slider::before {
+
+        width: 69%;
+    }
+
+    .our_branch_wrapper {
+        flex-direction: column;
+    }
+
+    .news .card_con {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .finance_Calc .form_wrapper {
+        padding: 30px 0px 0px 0px;
+    }
+
+    .store .form_bg .select_con {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .store .slider_text .slider-for li img {
+        width: 250px;
+    }
+
+
+
+    .store .slider_text .slider-nav img {
+        width: 59%;
+        height: 84px;
+    }
+
+    .online_store_section .tab-content .cars_slider img {
+        width: 400px;
+    }
+
+    .online_store_section .tab-content .cars_slider {
+        width: 750px;
+    }
+
+    .custom-dots {
+        left: -2.5rem;
+    }
+
+    .news .card_con {
+        position: relative;
+    }
+
+    .news::after {
+        height: 100%;
+    }
+
+    .news .card_con {
+        padding: 4rem 2rem;
+        padding-top: 7rem;
+        gap: 1.5rem;
+    }
+
+
+    .news {
+        height: unset;
+    }
+
+    .news .card_con .card {
+        height: 450px;
+        width: unset;
+
+    }
+
+    .componies .componies_wrapper .custom-dots :nth-child(2) span::after {
+        display: none;
+    }
+
+    .our_branch_wrapper {
+        align-items: center;
+    }
+
+    footer {
+        padding: 0rem 2rem;
+    }
+
+    footer .footer_con ul {
+        gap: .5rem;
+    }
+
+    footer .copy_right::before{
+        left: 0;
+        background-repeat: no-repeat;
+
+        background-size: 500px 30px;
+    }
+
+    .our_branch .right img {
+        width:  100%;
+    }
+}
+
+
+
+@media screen and (max-width: 747px) {
+
+
+    .our_branch .right img {
+        width:  100%;
+    }
+    .site_header {
+
+        height: 45px;
+
+    }
+
+
+    .site_header .navbar {
+        height: fit-content;
+
+        height: 45px;
+
+    }
+
+
+    .main_slider .slick-slide .slider_text_title {
+        font-size: 16px;
+    }
+
+    .main_slider .slick-slide .slider_text_desc p {
+        font-size: 12px;
+    }
+
+
+
+    .main_slider_img img {
+
+        height: 324px;
+    }
+
+    .main_slider .slick-slide .social_media img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .main_slider .slick-slide .slider_text {
+        right: 2rem;
+    }
+
+    .custom-dots {
+        top: 65px;
+        left: -12.2%;
+
+    }
+
+    .main_slider .slick-slide .social_media {
+        top: 15px;
+        bottom: unset;
+    }
+
+    .main_slider {
+        width: 84%;
+    }
+
+    .site_header .navbar #desk_manu {
+        left: 10px;
+    }
+
+    .main_slider::after {
+        display: none;
+    }
+
+    .our_branch {
+        padding: 2rem 1rem;
+    }
+
+    .our_branch .left::before {
+        right: -35px;
+    }
+
+    .main_slider::before {
+        width: 81%;
+    }
+
+    .news {
+
+        height: fit-content;
+        padding: 1rem 0rem;
+
+        padding-bottom: 130px;
+    }
+
+    .componies {
+        height: 100%;
+    }
+
+    .news .card_con {
+        height: unset;
+        position: relative;
+        z-index: 2;
+        top: 100px;
+        gap: 1.5rem;
+    }
+
+    .news::after {
+        height: 100%;
+        z-index: 1;
+    }
+
+    .contact_us .our_branches .box_con {
+
+        padding-right: unset;
+    }
+
+    .contact_us .our_branches .title {
+
+        right: unset;
+    }
+
+    .contact_us .our_branches {
+        right: 0;
+    }
+
+    .finance_Calc {
+        padding-right: unset;
+    }
+
+    .finance_Calc .form_bg {
+        padding: 60px 11px;
+    }
+
+    .our_branch .right ul li:nth-child(7) {
+        top: 117px;
+        left: 147px;
+    }
+
+    .our_branch .right ul li:nth-child(8) {
+        top: 100px;
+    }
+
+    .our_branch .right ul li:nth-child(4) {
+        left: 189px;
+        top: 20px;
+    }
+
+    .our_branch .right ul li:nth-child(10) {
+        top: 32px;
+        left: 92px;
+    }
+
+    .our_branch .right ul li:nth-child(6) {
+        top: 103px;
+        left: 66px;
+    }
+
+    .our_branch .right ul li:nth-child(5) {
+        top: 160px;
+        left: 52px;
+    }
+
+    .componies {
+        padding: 60px 20px;
+    }
+
+    /* .finance_Calc .select{
+    margin-bottom: 1rem;
+} */
+
+    .finance_Calc .form-control {
+        /* margin-bottom: 1rem; */
+    }
+
+    .finance_Calc label {
+        margin-top: 1rem;
+    }
+
+    .componies .componies_wrapper .custom-dots :nth-child(2) span::after {
+        display: none;
+    }
+
+    .componies .componies_wrapper .custom-dots {
+        gap: 2rem;
+    }
+
+    .online_store_section .tab-content .slick-slide .text {
+        flex-direction: column;
+    }
+
+    .store .form_bg .select_con {
+        grid-template-columns: repeat(1, 1fr);
+        gap: 1rem;
+    }
+
+    .store {
+        padding: 0px 10px 30px 0px;
+    }
+
+    .store .slider_text .slider-for li img {
+        width: 300px;
+        height: 300px;
+    }
+
+    .store .slider_text .slider-nav {
+        display: none;
+    }
+
+    .store .slider_text .text {
+        margin-top: 3rem;
+        padding: 0rem 2rem;
+    }
+
+    .online_store_section .tab-content .slick-slide {
+        padding-top: 12rem;
+
+        padding-bottom: 3rem;
+
+    }
+
+    .online_store_section .nav-tabs {
+        margin-bottom: -5rem;
+    }
+
+    .finance_Calc .form_wrapper {
+        padding: 30px 40px 0px 0px;
+    }
+
+    .site_header .navbar #desk_manu {
+        top: 10px;
+    }
+
+    .inner_wrapper {
+        width: 85%;
+    }
+
+    .news_section .news_con {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .news .card_con {
+        display: flex;
+    }
+
+    .online_store_section .tab-content .cars_slider {
+        width: 300px;
+    }
+
+    footer {
+        padding: 0rem;
+    }
+
+    .news .card_con .card {
+        width: 280px;
+        height: 370px;}
+
+        .news .card_con{
+            padding-top: 2rem;
+        }
+}
