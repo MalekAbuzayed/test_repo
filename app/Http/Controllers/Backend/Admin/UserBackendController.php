@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\User\StoreUserFormRequest;
 use App\Http\Requests\Backend\User\UpdateUserFormRequest;
 use App\Models\SupportTicket;
-use Illuminate\Http\Request;
 use App\Models\User;
 use App\Traits\UploadImageTrait;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 class UserBackendController extends Controller
 {
     use UploadImageTrait;
+
     // ========================================================================
     // =========================== index Function =============================
     // =========================Created By :Ahmad Abdulmonem Obeidat ==========
@@ -24,10 +25,11 @@ class UserBackendController extends Controller
     {
         try {
             $users = User::orderBy('created_at', 'desc')->paginate(12);
+
             return view('admin.users.index', compact('users'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -40,12 +42,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -63,8 +66,8 @@ class UserBackendController extends Controller
 
             return view('admin.users.create', compact('nextId'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -77,12 +80,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -112,8 +116,8 @@ class UserBackendController extends Controller
 
             return redirect()->route('super_admin.users-index')->with('success', 'Record Has Been Added Successfully');
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -126,12 +130,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -150,8 +155,8 @@ class UserBackendController extends Controller
                 return redirect()->route('super_admin.users-index')->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -164,12 +169,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -188,8 +194,8 @@ class UserBackendController extends Controller
                 return redirect()->route('super_admin.users-index')->with('danger', 'This data is not in the records');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -202,12 +208,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -245,8 +252,8 @@ class UserBackendController extends Controller
                 return redirect()->route('super_admin.users-index')->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -259,12 +266,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -281,13 +289,14 @@ class UserBackendController extends Controller
                 DB::transaction(function () use ($user) {
                     $user->delete();
                 });
+
                 return redirect()->route('super_admin.users-index')->with('success', 'The Deletion Process Has Been Successful');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -300,12 +309,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -317,12 +327,13 @@ class UserBackendController extends Controller
     public function showSoftDelete(Request $request, Route $route)
     {
         try {
-            $users = new User();
+            $users = new User;
             $users = $users->onlyTrashed()->select('*')->orderBy('created_at', 'asc')->get();
+
             return view('admin.users.trashed', compact('users'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -335,12 +346,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -357,13 +369,14 @@ class UserBackendController extends Controller
                 DB::transaction(function () use ($user) {
                     $user->restore();
                 });
+
                 return redirect()->route('super_admin.users-showSoftDelete')->with('success', 'Restore Completed Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -376,12 +389,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -401,13 +415,14 @@ class UserBackendController extends Controller
                     $user->status = 1;  // 1 => Active
                 }
                 $user->save();
+
                 return redirect()->back()->with('success', 'Process Has Been Done Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -420,12 +435,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -443,10 +459,11 @@ class UserBackendController extends Controller
                 // Split the query into an array using the comma ","
                 $selectedUsers = explode(',', $query);
                 $users = User::whereIn('id', $selectedUsers)->get();
-                if (isset($users) &&  $users->count() > 0) {
+                if (isset($users) && $users->count() > 0) {
                     DB::transaction(function () use ($selectedUsers) {
                         User::whereIn('id', $selectedUsers)->delete();
                     });
+
                     return redirect()->route('super_admin.users-index')->with('success', 'The Deletion Process Has Been Successful');
                 } else {
                     return redirect()->route('super_admin.users-index')->with('danger', 'Please Select At Least One Row');
@@ -455,8 +472,8 @@ class UserBackendController extends Controller
                 return redirect()->route('super_admin.users-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -469,12 +486,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -495,6 +513,7 @@ class UserBackendController extends Controller
                     DB::transaction(function () use ($selectedUsers) {
                         User::onlyTrashed()->whereIn('id', $selectedUsers)->restore();
                     });
+
                     return redirect()->route('super_admin.users-index')->with('success', 'Process Has Been Done Successfully');
                 } else {
                     return redirect()->route('super_admin.users-index')->with('danger', 'Please Select At Least One Row');
@@ -503,8 +522,8 @@ class UserBackendController extends Controller
                 return redirect()->route('super_admin.users-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -517,12 +536,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -540,10 +560,11 @@ class UserBackendController extends Controller
                 // Split the query into an array using the comma ","
                 $selectedUsers = explode(',', $query);
                 $users = User::whereIn('id', $selectedUsers)->get();
-                if (isset($users) &&  $users->count() > 0) {
+                if (isset($users) && $users->count() > 0) {
                     DB::transaction(function () use ($selectedUsers) {
                         User::whereIn('id', $selectedUsers)->update(['status' => '1']); // 1 => Active
                     });
+
                     return redirect()->route('super_admin.users-index')->with('success', 'Process Has Been Done Successfully');
                 } else {
                     return redirect()->route('super_admin.users-index')->with('danger', 'Please Select At Least One Row');
@@ -552,8 +573,8 @@ class UserBackendController extends Controller
                 return redirect()->route('super_admin.users-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -566,12 +587,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -589,10 +611,11 @@ class UserBackendController extends Controller
                 // Split the query into an array using the comma ","
                 $selectedUsers = explode(',', $query);
                 $users = User::whereIn('id', $selectedUsers)->get();
-                if (isset($users) &&  $users->count() > 0) {
+                if (isset($users) && $users->count() > 0) {
                     DB::transaction(function () use ($selectedUsers) {
-                        User::whereIn('id',  $selectedUsers)->update(['status' => 2]); // 1 => Inactive
+                        User::whereIn('id', $selectedUsers)->update(['status' => 2]); // 1 => Inactive
                     });
+
                     return redirect()->route('super_admin.users-index')->with('success', 'Process Has Been Done Successfully');
                 } else {
                     return redirect()->route('super_admin.users-index')->with('danger', 'Please Select At Least One Row');
@@ -601,8 +624,8 @@ class UserBackendController extends Controller
                 return redirect()->route('super_admin.users-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -615,12 +638,13 @@ class UserBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }

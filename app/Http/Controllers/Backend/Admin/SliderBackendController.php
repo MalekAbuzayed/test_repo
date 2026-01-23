@@ -7,15 +7,15 @@ use App\Http\Requests\Backend\Slider\StoreSliderFormRequest;
 use App\Http\Requests\Backend\Slider\UpdateSliderFormRequest;
 use App\Models\Slider;
 use App\Models\SupportTicket;
+use App\Traits\UploadImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\DB;
-use App\Traits\UploadImageTrait;
-
 
 class SliderBackendController extends Controller
 {
     use UploadImageTrait;
+
     // ========================================================================
     // =========================== index Function =============================
     // =========================Created By :Ahmad Abdulmonem Obeidat ==========
@@ -24,10 +24,11 @@ class SliderBackendController extends Controller
     {
         try {
             $sliders = Slider::orderBy('created_at', 'desc')->get();
+
             return view('admin.sliders.index', compact('sliders'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -40,12 +41,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -60,10 +62,11 @@ class SliderBackendController extends Controller
             // get the next autoincrement id :
             $statement = DB::select("SHOW TABLE STATUS LIKE 'sliders'");
             $nextId = $statement[0]->Auto_increment;
+
             return view('admin.sliders.create', compact('nextId'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -76,12 +79,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -100,7 +104,7 @@ class SliderBackendController extends Controller
                 'status' => $request->status,
                 'description_ar' => $request->description_ar,
                 'description_en' => $request->description_en,
-                'type' => $request->type
+                'type' => $request->type,
             ];
 
             // Upload Image Section :
@@ -126,8 +130,8 @@ class SliderBackendController extends Controller
 
             return redirect()->route('super_admin.sliders-index')->with('success', 'Record Has Been Added Successfully');
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -140,12 +144,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -164,8 +169,8 @@ class SliderBackendController extends Controller
                 return redirect()->route('super_admin.sliders-index')->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -178,12 +183,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -202,8 +208,8 @@ class SliderBackendController extends Controller
                 return redirect()->route('super_admin.sliders-index')->with('danger', 'This data is not in the records');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -216,12 +222,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -242,7 +249,7 @@ class SliderBackendController extends Controller
                     'status' => $request->status,
                     'description_ar' => $request->description_ar,
                     'description_en' => $request->description_en,
-                    'type' => $request->type
+                    'type' => $request->type,
                 ];
 
                 // Upload Image Section :
@@ -252,7 +259,6 @@ class SliderBackendController extends Controller
                     $last_image = $this->saveFile($orginal_image, $upload_location);
                     $updated_data['image'] = $last_image;
                 }
-
 
                 // Upload video Section :
                 if (isset($request->video)) {
@@ -272,8 +278,8 @@ class SliderBackendController extends Controller
                 return redirect()->route('super_admin.sliders-index')->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -286,12 +292,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -308,13 +315,14 @@ class SliderBackendController extends Controller
                 DB::transaction(function () use ($slider) {
                     $slider->delete();
                 });
+
                 return redirect()->route('super_admin.sliders-index')->with('success', 'The Deletion Process Has Been Successful');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -327,12 +335,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -344,12 +353,13 @@ class SliderBackendController extends Controller
     public function showSoftDelete(Request $request, Route $route)
     {
         try {
-            $sliders = new Slider();
+            $sliders = new Slider;
             $sliders = $sliders->onlyTrashed()->select('*')->orderBy('created_at', 'asc')->get();
+
             return view('admin.sliders.trashed', compact('sliders'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -362,12 +372,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -384,13 +395,14 @@ class SliderBackendController extends Controller
                 DB::transaction(function () use ($slider) {
                     $slider->restore();
                 });
+
                 return redirect()->route('super_admin.sliders-showSoftDelete')->with('success', 'Restore Completed Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -403,12 +415,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -428,13 +441,14 @@ class SliderBackendController extends Controller
                     $slider->status = 1;  // 1 => Active
                 }
                 $slider->save();
+
                 return redirect()->back()->with('success', 'Process Has Been Done Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -447,12 +461,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -470,10 +485,11 @@ class SliderBackendController extends Controller
                 // Split the query into an array using the comma ","
                 $selectedSliders = explode(',', $query);
                 $sliders = Slider::whereIn('id', $selectedSliders)->get();
-                if (isset($sliders) &&  $sliders->count() > 0) {
+                if (isset($sliders) && $sliders->count() > 0) {
                     DB::transaction(function () use ($selectedSliders) {
                         Slider::whereIn('id', $selectedSliders)->delete();
                     });
+
                     return redirect()->route('super_admin.sliders-index')->with('success', 'The Deletion Process Has Been Successful');
                 } else {
                     return redirect()->route('super_admin.sliders-index')->with('danger', 'Please Select At Least One Row');
@@ -482,8 +498,8 @@ class SliderBackendController extends Controller
                 return redirect()->route('super_admin.sliders-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -496,12 +512,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -522,6 +539,7 @@ class SliderBackendController extends Controller
                     DB::transaction(function () use ($selectedSliders) {
                         Slider::onlyTrashed()->whereIn('id', $selectedSliders)->restore();
                     });
+
                     return redirect()->route('super_admin.sliders-index')->with('success', 'Process Has Been Done Successfully');
                 } else {
                     return redirect()->route('super_admin.sliders-index')->with('danger', 'Please Select At Least One Row');
@@ -530,8 +548,8 @@ class SliderBackendController extends Controller
                 return redirect()->route('super_admin.sliders-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -544,12 +562,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -567,10 +586,11 @@ class SliderBackendController extends Controller
                 // Split the query into an array using the comma ","
                 $selectedSliders = explode(',', $query);
                 $sliders = Slider::whereIn('id', $selectedSliders)->get();
-                if (isset($sliders) &&  $sliders->count() > 0) {
+                if (isset($sliders) && $sliders->count() > 0) {
                     DB::transaction(function () use ($selectedSliders) {
                         Slider::whereIn('id', $selectedSliders)->update(['status' => '1']); // 1 => Active
                     });
+
                     return redirect()->route('super_admin.sliders-index')->with('success', 'Process Has Been Done Successfully');
                 } else {
                     return redirect()->route('super_admin.sliders-index')->with('danger', 'Please Select At Least One Row');
@@ -579,8 +599,8 @@ class SliderBackendController extends Controller
                 return redirect()->route('super_admin.sliders-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -593,12 +613,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -616,10 +637,11 @@ class SliderBackendController extends Controller
                 // Split the query into an array using the comma ","
                 $selectedSliders = explode(',', $query);
                 $sliders = Slider::whereIn('id', $selectedSliders)->get();
-                if (isset($sliders) &&  $sliders->count() > 0) {
+                if (isset($sliders) && $sliders->count() > 0) {
                     DB::transaction(function () use ($selectedSliders) {
-                        Slider::whereIn('id',  $selectedSliders)->update(['status' => 2]); // 1 => Inactive
+                        Slider::whereIn('id', $selectedSliders)->update(['status' => 2]); // 1 => Inactive
                     });
+
                     return redirect()->route('super_admin.sliders-index')->with('success', 'Process Has Been Done Successfully');
                 } else {
                     return redirect()->route('super_admin.sliders-index')->with('danger', 'Please Select At Least One Row');
@@ -628,8 +650,8 @@ class SliderBackendController extends Controller
                 return redirect()->route('super_admin.sliders-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -642,12 +664,13 @@ class SliderBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }

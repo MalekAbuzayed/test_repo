@@ -5,7 +5,6 @@ namespace App\Http\Requests\Backend\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
-
 class UpdateUserFormRequest extends FormRequest
 {
     /**
@@ -21,14 +20,13 @@ class UpdateUserFormRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-
     public function rules()
     {
         $rules = [
             'first_name' => 'required|string|max:190',
             'last_name' => 'required|string|max:190',
-            'email' => 'required|email|unique:users,email,' . $this->id,
-            'phone' => 'required|min:7|unique:users,phone,' . $this->id,
+            'email' => 'required|email|unique:users,email,'.$this->id,
+            'phone' => 'required|min:7|unique:users,phone,'.$this->id,
             'password' => ['nullable', Password::min(8)->mixedCase()->numbers()->symbols(), 'confirmed'],
             'password_confirmation' => 'same:password',
         ];
