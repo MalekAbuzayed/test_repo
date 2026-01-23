@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Database\Eloquent\Model;
 
 class AboutUs extends Model
 {
     use HasFactory;
 
-
     // ===================================================================================================================
     // ============================================= Basic Section =======================================================
     // ===================================================================================================================
-    protected $table = "about_us";
+    protected $table = 'about_us';
 
     protected $fillable = [
         'title_ar',
@@ -23,5 +21,4 @@ class AboutUs extends Model
         'description_en',
         'image',
     ];
-
 }

@@ -9,19 +9,19 @@ use Illuminate\Routing\Route;
 
 class SupportBackendController extends Controller
 {
-
     // ================================================================
     // ======================== index Function ========================
     // ================================================================
     public function index(Request $request, Route $route)
     {
         try {
-            $rows = new SupportTicket();
+            $rows = new SupportTicket;
             $rows = $rows->select('*')->orderBy('id', 'asc')->get();
+
             return view('admin.support_tickets.index', compact('rows'));
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -40,6 +40,7 @@ class SupportBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -53,13 +54,14 @@ class SupportBackendController extends Controller
             $ticket = SupportTicket::find($id);
             if ($ticket) {
                 $ticket->delete();
+
                 return redirect()->route('user.support_tickets-index')->with('success', 'Deleted Successfully');
             } else {
                 return redirect()->route('user.support_tickets-index')->with('danger', 'This record does not exist in the records');
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -78,6 +80,7 @@ class SupportBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }

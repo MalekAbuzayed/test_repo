@@ -6,14 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\AboutUs\UpdateAboutUsFormRequest;
 use App\Models\AboutUs;
 use App\Models\SupportTicket;
+use App\Traits\UploadImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
-use App\Traits\UploadImageTrait;
 use Illuminate\Support\Facades\DB;
 
 class AboutUsBackendController extends Controller
 {
     use UploadImageTrait;
+
     // ========================================================================
     // =========================== index Function =============================
     // =========================Created By :Ahmad Abdulmonem Obeidat ==========
@@ -22,10 +23,11 @@ class AboutUsBackendController extends Controller
     {
         try {
             $aboutUs = AboutUs::first();
+
             return view('admin.about_us.index', compact('aboutUs'));
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -44,6 +46,7 @@ class AboutUsBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -63,7 +66,7 @@ class AboutUsBackendController extends Controller
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -82,6 +85,7 @@ class AboutUsBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -124,7 +128,7 @@ class AboutUsBackendController extends Controller
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -143,6 +147,7 @@ class AboutUsBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }

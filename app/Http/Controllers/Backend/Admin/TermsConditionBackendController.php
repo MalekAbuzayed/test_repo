@@ -21,10 +21,11 @@ class TermsConditionBackendController extends Controller
     {
         try {
             $termsConditions = TermsAndCondition::orderBy('created_at', 'desc')->get();
+
             return view('admin.terms.index', compact('termsConditions'));
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -43,6 +44,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -57,10 +59,11 @@ class TermsConditionBackendController extends Controller
             // get the next autoincrement id :
             $statement = DB::select("SHOW TABLE STATUS LIKE 'terms_and_conditions'");
             $nextId = $statement[0]->Auto_increment;
+
             return view('admin.terms.create', compact('nextId'));
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -79,6 +82,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -107,7 +111,7 @@ class TermsConditionBackendController extends Controller
             return redirect()->route('super_admin.terms_and_conditions-index')->with('success', 'The Record Has Been Added Successfully');
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -126,6 +130,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -145,7 +150,7 @@ class TermsConditionBackendController extends Controller
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -164,6 +169,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -183,7 +189,7 @@ class TermsConditionBackendController extends Controller
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -202,6 +208,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -235,7 +242,7 @@ class TermsConditionBackendController extends Controller
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -254,6 +261,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -270,13 +278,14 @@ class TermsConditionBackendController extends Controller
                 DB::transaction(function () use ($termCondition) {
                     $termCondition->delete();
                 });
+
                 return redirect()->route('super_admin.terms_and_conditions-index')->with('success', 'Record Has Been Deleted Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -295,6 +304,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -306,12 +316,13 @@ class TermsConditionBackendController extends Controller
     public function showSoftDelete(Request $request, Route $route)
     {
         try {
-            $termConditions = new TermsAndCondition();
+            $termConditions = new TermsAndCondition;
             $termConditions = $termConditions->onlyTrashed()->select('*')->orderBy('created_at', 'asc')->get();
+
             return view('admin.terms.trashed', compact('termConditions'));
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -330,6 +341,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -346,13 +358,14 @@ class TermsConditionBackendController extends Controller
                 DB::transaction(function () use ($termCondition) {
                     $termCondition->restore();
                 });
+
                 return redirect()->route('super_admin.terms_and_conditions-showSoftDelete')->with('success', 'Record Has Been Restored Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -371,6 +384,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -390,13 +404,14 @@ class TermsConditionBackendController extends Controller
                     $termCondition->status = 1;  // 1 => Active
                 }
                 $termCondition->save();
+
                 return redirect()->back()->with('success', 'Process Done Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -415,6 +430,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -436,6 +452,7 @@ class TermsConditionBackendController extends Controller
                     DB::transaction(function () use ($selectedTerms) {
                         TermsAndCondition::whereIn('id', $selectedTerms)->delete();
                     });
+
                     return redirect()->route('super_admin.terms_and_conditions-index')->with('success', 'The Deletion Process Has Been Successful');
                 } else {
                     return redirect()->route('super_admin.terms_and_conditions-index')->with('danger', 'Please Select At Least One Row');
@@ -445,7 +462,7 @@ class TermsConditionBackendController extends Controller
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -464,6 +481,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -483,6 +501,7 @@ class TermsConditionBackendController extends Controller
                     DB::transaction(function () use ($selectedTerms) {
                         TermsAndCondition::onlyTrashed()->whereIn('id', $selectedTerms)->restore();
                     });
+
                     return redirect()->route('super_admin.terms_and_conditions-index')->with('success', 'Process Done Successfully');
                 } else {
                     return redirect()->route('super_admin.terms_and_conditions-index')->with('danger', 'Please Select At Least One Row');
@@ -492,7 +511,7 @@ class TermsConditionBackendController extends Controller
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -511,6 +530,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -531,6 +551,7 @@ class TermsConditionBackendController extends Controller
                     DB::transaction(function () use ($selectedTerms) {
                         TermsAndCondition::whereIn('id', $selectedTerms)->update(['status' => '1']); // 1 => Active
                     });
+
                     return redirect()->route('super_admin.terms_and_conditions-index')->with('success', 'Process Done Successfully');
                 } else {
                     return redirect()->route('super_admin.terms_and_conditions-index')->with('danger', 'Please Select At Least One Row');
@@ -540,7 +561,7 @@ class TermsConditionBackendController extends Controller
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -559,6 +580,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -579,6 +601,7 @@ class TermsConditionBackendController extends Controller
                     DB::transaction(function () use ($selectedTerms) {
                         TermsAndCondition::whereIn('id', $selectedTerms)->update(['status' => 2]);
                     });
+
                     return redirect()->route('super_admin.terms_and_conditions-index')->with('success', 'Process Done Successfully');
                 } else {
                     return redirect()->route('super_admin.terms_and_conditions-index')->with('danger', 'Please Select At Least One Row');
@@ -588,7 +611,7 @@ class TermsConditionBackendController extends Controller
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -607,6 +630,7 @@ class TermsConditionBackendController extends Controller
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }

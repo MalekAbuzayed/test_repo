@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->tinyInteger('status')->default(1)->comment = "1 => Active || 2 => Inactive";
+            $table->tinyInteger('status')->default(1)->comment = '1 => Active || 2 => Inactive';
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

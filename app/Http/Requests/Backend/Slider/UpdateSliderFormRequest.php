@@ -52,12 +52,10 @@ class UpdateSliderFormRequest extends FormRequest
             'description_ar.required' => 'Description AR Is Required',
             'description_en.required' => 'Description EN Is Required',
 
-
             'status.required' => 'Status Is Required',
             'status.integer' => 'Status Must Be Integer',
             'status.numeric' => 'Status Must Be Numeric',
             'status.in' => 'Status Must Be Either Active or Inactive',
-
 
             'type.required' => 'Type Is Required',
             'type.integer' => 'Type Must Be Integer',

@@ -21,10 +21,11 @@ class PrivacyPolicyBackendController extends Controller
     {
         try {
             $privacyPolices = PrivacyPolicy::orderBy('created_at', 'desc')->get();
+
             return view('admin.privacy_polices.index', compact('privacyPolices'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -37,12 +38,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -57,10 +59,11 @@ class PrivacyPolicyBackendController extends Controller
             // get the next autoincrement id :
             $statement = DB::select("SHOW TABLE STATUS LIKE 'privacy_policies'");
             $nextId = $statement[0]->Auto_increment;
+
             return view('admin.privacy_polices.create', compact('nextId'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -73,12 +76,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -106,8 +110,8 @@ class PrivacyPolicyBackendController extends Controller
 
             return redirect()->route('super_admin.privacy_policies-index')->with('success', 'The Record Has Been Added Successfully');
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -120,12 +124,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -144,8 +149,8 @@ class PrivacyPolicyBackendController extends Controller
                 return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -158,12 +163,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -182,8 +188,8 @@ class PrivacyPolicyBackendController extends Controller
                 return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -196,12 +202,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -234,8 +241,8 @@ class PrivacyPolicyBackendController extends Controller
                 return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -248,12 +255,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -270,13 +278,14 @@ class PrivacyPolicyBackendController extends Controller
                 DB::transaction(function () use ($privacyPolicy) {
                     $privacyPolicy->delete();
                 });
+
                 return redirect()->route('super_admin.privacy_policies-index')->with('success', 'Record Has Been Deleted Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -289,12 +298,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -306,12 +316,13 @@ class PrivacyPolicyBackendController extends Controller
     public function showSoftDelete(Request $request, Route $route)
     {
         try {
-            $privacyPolices = new PrivacyPolicy();
+            $privacyPolices = new PrivacyPolicy;
             $privacyPolices = $privacyPolices->onlyTrashed()->select('*')->orderBy('created_at', 'asc')->get();
+
             return view('admin.privacy_polices.trashed', compact('privacyPolices'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -324,12 +335,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -346,13 +358,14 @@ class PrivacyPolicyBackendController extends Controller
                 DB::transaction(function () use ($privacyPolicy) {
                     $privacyPolicy->restore();
                 });
+
                 return redirect()->route('super_admin.privacy_policies-showSoftDelete')->with('success', 'Record Has Been Restored Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -365,12 +378,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -390,13 +404,14 @@ class PrivacyPolicyBackendController extends Controller
                     $privacyPolicy->status = 1;  // 1 => Active
                 }
                 $privacyPolicy->save();
+
                 return redirect()->back()->with('success', 'Process Done Successfully');
             } else {
                 return redirect()->back()->with('danger', 'Record Not Found');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -409,12 +424,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -432,10 +448,11 @@ class PrivacyPolicyBackendController extends Controller
                 // Split the query into an array using the comma ","
                 $selectedPrivaciesPolices = explode(',', $query);
                 $privacyPolices = PrivacyPolicy::whereIn('id', $selectedPrivaciesPolices)->get();
-                if (isset($privacyPolices) &&  $privacyPolices->count() > 0) {
+                if (isset($privacyPolices) && $privacyPolices->count() > 0) {
                     DB::transaction(function () use ($selectedPrivaciesPolices) {
                         PrivacyPolicy::whereIn('id', $selectedPrivaciesPolices)->delete();
                     });
+
                     return redirect()->route('super_admin.privacy_policies-index')->with('success', 'The Deletion Process Has Been Successful');
                 } else {
                     return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Please Select At Least One Row');
@@ -444,8 +461,8 @@ class PrivacyPolicyBackendController extends Controller
                 return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -458,12 +475,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -483,7 +501,8 @@ class PrivacyPolicyBackendController extends Controller
                     DB::transaction(function () use ($selectedPrivaciesPolices) {
                         PrivacyPolicy::onlyTrashed()->whereIn('id', $selectedPrivaciesPolices)->restore();
                     });
-                    return redirect()->route('super_admin.privacy_policies-index')->with('success',  'Process Done Successfully');
+
+                    return redirect()->route('super_admin.privacy_policies-index')->with('success', 'Process Done Successfully');
                 } else {
                     return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Please Select At Least One Row');
                 }
@@ -491,8 +510,8 @@ class PrivacyPolicyBackendController extends Controller
                 return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -505,12 +524,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -527,10 +547,11 @@ class PrivacyPolicyBackendController extends Controller
             if ($query) {
                 $selectedPrivaciesPolices = explode(',', $query);
                 $privacyPolices = PrivacyPolicy::whereIn('id', $selectedPrivaciesPolices)->get();
-                if (isset($privacyPolices) &&  $privacyPolices->count() > 0) {
+                if (isset($privacyPolices) && $privacyPolices->count() > 0) {
                     DB::transaction(function () use ($selectedPrivaciesPolices) {
                         PrivacyPolicy::whereIn('id', $selectedPrivaciesPolices)->update(['status' => '1']); // 1 => Active
                     });
+
                     return redirect()->route('super_admin.privacy_policies-index')->with('success', 'Process Done Successfully');
                 } else {
                     return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Please Select At Least One Row');
@@ -539,8 +560,8 @@ class PrivacyPolicyBackendController extends Controller
                 return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -553,12 +574,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -575,10 +597,11 @@ class PrivacyPolicyBackendController extends Controller
             if ($query) {
                 $selectedPrivaciesPolices = explode(',', $query);
                 $privacyPolices = PrivacyPolicy::whereIn('id', $selectedPrivaciesPolices)->get();
-                if (isset($privacyPolices) &&  $privacyPolices->count() > 0) {
+                if (isset($privacyPolices) && $privacyPolices->count() > 0) {
                     DB::transaction(function () use ($selectedPrivaciesPolices) {
-                        PrivacyPolicy::whereIn('id',  $selectedPrivaciesPolices)->update(['status' => 2]);
+                        PrivacyPolicy::whereIn('id', $selectedPrivaciesPolices)->update(['status' => 2]);
                     });
+
                     return redirect()->route('super_admin.privacy_policies-index')->with('success', 'Process Done Successfully');
                 } else {
                     return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Please Select At Least One Row');
@@ -587,8 +610,8 @@ class PrivacyPolicyBackendController extends Controller
                 return redirect()->route('super_admin.privacy_policies-index')->with('danger', 'Please Select At Least One Row');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -601,12 +624,13 @@ class PrivacyPolicyBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }

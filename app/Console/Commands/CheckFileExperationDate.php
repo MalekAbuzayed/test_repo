@@ -8,7 +8,6 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-
 // created by ahmad obeidat
 class CheckFileExperationDate extends Command
 {
@@ -64,7 +63,7 @@ class CheckFileExperationDate extends Command
                         'user_id' => $manager->id,
                         'file_id' => $file->id,
                         'title' => 'File Expiration Warning',
-                        'description' => "File '{$file->name_en}' (Doc #: {$file->document_number}) will expire in {$readableTime}."
+                        'description' => "File '{$file->name_en}' (Doc #: {$file->document_number}) will expire in {$readableTime}.",
                     ]);
 
                     $notificationCount++;

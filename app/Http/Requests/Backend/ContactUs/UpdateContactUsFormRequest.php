@@ -37,6 +37,4 @@ class UpdateContactUsFormRequest extends FormRequest
             'telegram' => 'nullable|url',
         ];
     }
-
 }
-

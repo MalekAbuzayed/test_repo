@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Database\Eloquent\Model;
 
 class ContactUsRequest extends Model
 {
     use HasFactory;
 
-
     // ===================================================================================================================
     // ============================================= Basic Section =======================================================
     // ===================================================================================================================
-    protected $table = "contact_us_requests";
+    protected $table = 'contact_us_requests';
 
     protected $fillable = [
         'name',

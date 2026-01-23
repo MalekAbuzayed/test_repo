@@ -39,7 +39,6 @@ class StorePrivacyPolicyFormRequest extends FormRequest
             'description_ar.required' => 'Description AR Is Required',
             'description_en.required' => 'Description EN Is Required',
 
-
             'status.required' => 'Status Is Required',
             'status.integer' => 'Status Must Be Integer',
             'status.numeric' => 'Status Must Be Numeric',
