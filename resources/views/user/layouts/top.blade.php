@@ -12,7 +12,7 @@
         content="Monster is powerful and clean admin dashboard template, inpired from Google's Material Design">
     <meta name="robots" content="noindex,nofollow">
     <title>Magic Energy</title>
-
+    <link rel="stylesheet" href="{{ asset('public/style_files/user/layout_style.css') }}">
 
 </head>
 
@@ -23,4 +23,3 @@
     <!-- ============================================================== -->
     <!-- Main wrapper - style you can find in pages.scss -->
     <!-- ============================================================== -->
-    <div id="main-wrapper">
