@@ -11,7 +11,7 @@
     <meta name="description"
         content="Monster is powerful and clean admin dashboard template, inpired from Google's Material Design">
     <meta name="robots" content="noindex,nofollow">
-    <title>Mada</title>
+    <title>Magic Energy</title>
 
 
 </head>
