@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\Backend\Admin\AboutUsBackendController;
-use App\Http\Controllers\Backend\Admin\AdminBackendController;
-use App\Http\Controllers\Backend\Admin\ContactUsBackendController;
-use App\Http\Controllers\Backend\Admin\ContactUsRequestBackendController;
-use App\Http\Controllers\Backend\Admin\PrivacyPolicyBackendController;
-use App\Http\Controllers\Backend\Admin\SliderBackendController;
-use App\Http\Controllers\Backend\Admin\TermsConditionBackendController;
-use App\Http\Controllers\Backend\Admin\UserBackendController;
-use App\Http\Controllers\Backend\Auth\AuthBackendController;
-use App\Http\Controllers\Backend\Dashboard\DashboardBackendController;
-use App\Http\Controllers\Backend\Support\SupportBackendController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\SessionController;
+use App\Http\Controllers\Backend\Auth\AuthBackendController;
+use App\Http\Controllers\Backend\Admin\UserBackendController;
+use App\Http\Controllers\Backend\Admin\AdminBackendController;
+use App\Http\Controllers\Backend\Admin\SliderBackendController;
+use App\Http\Controllers\Backend\Admin\AboutUsBackendController;
+use App\Http\Controllers\Backend\Admin\ProductBackendController;
+use App\Http\Controllers\Backend\Admin\ContactUsBackendController;
+use App\Http\Controllers\Backend\Support\SupportBackendController;
+use App\Http\Controllers\Backend\Admin\PrivacyPolicyBackendController;
+use App\Http\Controllers\Backend\Dashboard\DashboardBackendController;
+use App\Http\Controllers\Backend\Admin\TermsConditionBackendController;
+use App\Http\Controllers\Backend\Admin\ContactUsRequestBackendController;
 
 Route::get('/login', [AuthBackendController::class, 'showLoginForm'])->name('login');
 Route::get('/admin', [AuthBackendController::class, 'showLoginForm'])->name('welcome');
@@ -57,7 +58,6 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
             Route::get('/activeSelected', [UserBackendController::class, 'activeSelected'])->name('users-activeSelected');
             Route::get('/inactiveSelected', [UserBackendController::class, 'inactiveSelected'])->name('users-inactiveSelected');
             Route::post('/get-available-users', [UserBackendController::class, 'getAvailableUsers']);
-
         });
 
         // about_us :
@@ -165,8 +165,29 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
             Route::get('/activeSelected', [AdminBackendController::class, 'activeSelected'])->name('admins-activeSelected');
             Route::get('/inactiveSelected', [AdminBackendController::class, 'inactiveSelected'])->name('admins-inactiveSelected');
         });
+
+        // Products Routes
+        Route::group(['prefix' => 'products'], function () {
+            Route::get('/', [ProductBackendController::class, 'index'])->name('products-index');
+            Route::get('/create', [ProductBackendController::class, 'create'])->name('products-create');
+            Route::post('/store', [ProductBackendController::class, 'store'])->name('products-store');
+            Route::get('/show/{id}', [ProductBackendController::class, 'show'])->name('products-show');
+            Route::get('/edit/{id}', [ProductBackendController::class, 'edit'])->name('products-edit');
+            Route::post('/update/{id}', [ProductBackendController::class, 'update'])->name('products-update');
+            Route::get('/softDelete/{id}', [ProductBackendController::class, 'softDelete'])->name('products-softDelete');
+            Route::get('/showSoftDelete', [ProductBackendController::class, 'showSoftDelete'])->name('products-showSoftDelete');
+            Route::get('/softDeleteRestore/{id}', [ProductBackendController::class, 'softDeleteRestore'])->name('products-softDeleteRestore');
+            Route::get('/activeInactiveSingle/{id}', [ProductBackendController::class, 'activeInactiveSingle'])->name('products-activeInactiveSingle');
+            Route::get('/softDeleteSelected', [ProductBackendController::class, 'softDeleteSelected'])->name('products-softDeleteSelected');
+            Route::get('/softDeleteRestoreSelected', [ProductBackendController::class, 'softDeleteRestoreSelected'])->name('products-softDeleteRestoreSelected');
+            Route::get('/activeSelected', [ProductBackendController::class, 'activeSelected'])->name('products-activeSelected');
+            Route::get('/inactiveSelected', [ProductBackendController::class, 'inactiveSelected'])->name('products-inactiveSelected');
+        });
     });
 });
+
+
+
 
 
 // -------------------------------------------------------- User Routes --------------------------------------------------------------------
