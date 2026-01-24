@@ -21,6 +21,20 @@
 
         <!-- Stats Cards Row -->
         <div class="stats-container">
+             <!-- Products -->
+            <div class="stat-card stat-product">
+                <div class="stat-info">
+                    <a href="{{ route('super_admin.products-index') }}">
+                        <h4 style="color: blue">Visit</h4>
+                        <p>Products</p>
+                    </a>
+
+                </div>
+                <div class="stat-icon">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </div>
+            </div>
+
             <!-- About-Us -->
             <div class="stat-card stat-about">
                 <div class="stat-info">

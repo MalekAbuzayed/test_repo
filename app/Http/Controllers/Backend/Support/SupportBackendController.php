@@ -55,9 +55,9 @@ class SupportBackendController extends Controller
             if ($ticket) {
                 $ticket->delete();
 
-                return redirect()->route('user.support_tickets-index')->with('success', 'Deleted Successfully');
+                return redirect()->route('super_admin.support_tickets-index')->with('success', 'Deleted Successfully');
             } else {
-                return redirect()->route('user.support_tickets-index')->with('danger', 'This record does not exist in the records');
+                return redirect()->route('super_admin.support_tickets-index')->with('danger', 'This record does not exist in the records');
             }
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();

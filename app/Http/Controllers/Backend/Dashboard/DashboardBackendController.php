@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\ContactUsRequest;
+use App\Models\Product;
 use App\Models\Slider;
 use App\Models\User;
 use Carbon\Carbon;
@@ -23,7 +24,8 @@ class DashboardBackendController extends Controller
         $usersCount = User::count();
         $adminsCount = Admin::count();
         $slidersCount = Slider::count();
+        $productsCount = Product::count();
 
-        return view('admin.index', compact('carbonGetNowTime', 'contactUsRequestsCount', 'usersCount', 'adminsCount', 'slidersCount'));
+        return view('admin.index', compact('carbonGetNowTime', 'contactUsRequestsCount', 'usersCount', 'adminsCount', 'slidersCount', 'productsCount'));
     }
 }

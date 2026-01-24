@@ -25,6 +25,15 @@
                     </a>
                     <ul aria-expanded="false" class="collapse first-level">
 
+                        {{-- Products --}}
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark"
+                                href="{{ route('super_admin.products-index') }}">
+                                <i class="fa-solid fa-basket-shopping"></i>
+                                <span>Products</span>
+                            </a>
+                        </li>
+
                         {{-- about us --}}
                         <li class="sidebar-item">
                             <a class="sidebar-link waves-effect waves-dark"
@@ -124,7 +133,7 @@
 
                 {{-- WEBSite --}}
                 <li class="sidebar-item">
-                    <a class="sidebar-link waves-effect waves-dark" href="{{ route('welcome') }}" target="_blank">
+                    <a class="sidebar-link waves-effect waves-dark" href="{{ route('index') }}" target="_blank">
                         <i class="mdi mdi-web"></i>
                         <span>WebSite</span>
                     </a>
