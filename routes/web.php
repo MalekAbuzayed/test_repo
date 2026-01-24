@@ -12,9 +12,12 @@ use App\Http\Controllers\Backend\Auth\AuthBackendController;
 use App\Http\Controllers\Backend\Dashboard\DashboardBackendController;
 use App\Http\Controllers\Backend\Support\SupportBackendController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\SessionController;
 
 Route::get('/login', [AuthBackendController::class, 'showLoginForm'])->name('login');
-Route::get('/', [AuthBackendController::class, 'showLoginForm'])->name('welcome');
+Route::get('/admin', [AuthBackendController::class, 'showLoginForm'])->name('welcome');
+
+
 
 Route::prefix('super_admin')->name('super_admin.')->group(function () {
     Route::get('/login', [AuthBackendController::class, 'showLoginForm'])->name('loginUser');
@@ -23,12 +26,12 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
     Route::group(['middleware' => ['auth:super_admin']], function () {
 
         // Dashboard Route :
-        // Created By:Ahmad Obeidat
+        // Created By:Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::get('/dashboard', [DashboardBackendController::class, 'index'])->name('dashboard');
 
         // Support Tickets :
-        // Created By:Ahmad Obeidat
+        // Created By:Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::group(['prefix' => 'support_tickets'], function () {
             Route::get('/index', [SupportBackendController::class, 'index'])->name('support_tickets-index');
@@ -36,7 +39,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // Users :
-        // Created By:Ahmad Obeidat
+        // Created By:Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::group(['prefix' => 'users'], function () {
             Route::get('/index', [UserBackendController::class, 'index'])->name('users-index');
@@ -58,7 +61,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // about_us :
-        // Created By Ahmad Obeidat
+        // Created By Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::group(['prefix' => 'about_us'], function () {
             Route::get('/index', [AboutUsBackendController::class, 'index'])->name('about_us-index');
@@ -67,7 +70,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // contact_us :
-        // Created By Ahmad Obeidat
+        // Created By Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::group(['prefix' => 'contact_us'], function () {
             Route::get('/index', [ContactUsBackendController::class, 'index'])->name('contact_us-index');
@@ -76,7 +79,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // contact_us_requests :
-        // Created By Ahmad Obeidat
+        // Created By Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::group(['prefix' => 'contact_us_requests'], function () {
             Route::get('/index', [ContactUsRequestBackendController::class, 'index'])->name('contact_us_requests-index');
@@ -84,7 +87,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // privacy_policies
-        // Created By Ahmad Obeidat
+        // Created By Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::group(['prefix' => 'privacy_policies'], function () {
             Route::get('/index', [PrivacyPolicyBackendController::class, 'index'])->name('privacy_policies-index');
@@ -104,7 +107,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // terms_and_conditions
-        // Created By Ahmad Obeidat
+        // Created By Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::group(['prefix' => 'terms_and_conditions'], function () {
             Route::get('/index', [TermsConditionBackendController::class, 'index'])->name('terms_and_conditions-index');
@@ -123,9 +126,8 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
             Route::get('/inactiveSelected', [TermsConditionBackendController::class, 'inactiveSelected'])->name('terms_and_conditions-inactiveSelected');
         });
 
-
         // Slider Routes :
-        // Created By Ahmad Obeidat
+        // Created By Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::group(['prefix' => 'sliders'], function () {
             Route::get('/index', [SliderBackendController::class, 'index'])->name('sliders-index');
@@ -145,7 +147,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // Admins :
-        // Created By:Ahmad Obeidat
+        // Created By:Ayhm, Malek, Abdalah
         // ==============================================================================
         Route::group(['prefix' => 'admins'], function () {
             Route::get('/index', [AdminBackendController::class, 'index'])->name('admins-index');
@@ -165,3 +167,11 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
     });
 });
+
+
+// -------------------------------------------------------- User Routes --------------------------------------------------------------------
+Route::get('/', [SessionController::class, 'index'])->name('index');
+Route::get('/about', [SessionController::class, 'index'])->name('about');
+Route::get('/contact_us', [SessionController::class, 'index'])->name('contact_us');
+Route::get('/faq', [SessionController::class, 'index'])->name('faq');
+Route::get('/products', [SessionController::class, 'index'])->name('products');

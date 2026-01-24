@@ -5,7 +5,6 @@ namespace App\Http\Requests\Backend\Admin;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
-
 class UpdateAdminFormRequest extends FormRequest
 {
     /**
@@ -25,7 +24,7 @@ class UpdateAdminFormRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|string|max:190',
-            'email' => 'required|email|unique:admins,email,' . $this->id,
+            'email' => 'required|email|unique:admins,email,'.$this->id,
             'password' => ['nullable', Password::min(8)->mixedCase()->numbers()->symbols(), 'confirmed'],
             'password_confirmation' => 'same:password',
         ];

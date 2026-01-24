@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TermsAndCondition extends Model
@@ -14,7 +14,7 @@ class TermsAndCondition extends Model
     // ===================================================================================================================
     // ============================================= Basic Section =======================================================
     // ===================================================================================================================
-    protected $table = "terms_and_conditions";
+    protected $table = 'terms_and_conditions';
 
     protected $fillable = [
         'title_ar',
@@ -23,8 +23,6 @@ class TermsAndCondition extends Model
         'description_en',
         'status',
     ];
-
-
 
     // ===================================================================================================================
     // ============================================= Accessors Section ===================================================

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Slider extends Model
@@ -11,11 +11,10 @@ class Slider extends Model
     use HasFactory;
     use SoftDeletes;
 
-
     // ===================================================================================================================
     // ============================================= Basic Section =======================================================
     // ===================================================================================================================
-    protected $table = "sliders";
+    protected $table = 'sliders';
 
     protected $fillable = [
         'title_ar',
@@ -25,8 +24,6 @@ class Slider extends Model
         'image',
         'status',
     ];
-
-
 
     // ===================================================================================================================
     // ============================================= Accessors Section ===================================================

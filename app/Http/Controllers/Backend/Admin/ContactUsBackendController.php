@@ -8,7 +8,6 @@ use App\Models\ContactUs;
 use App\Models\SupportTicket;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
-use App\Traits\UploadImageTrait;
 use Illuminate\Support\Facades\DB;
 
 class ContactUsBackendController extends Controller
@@ -21,10 +20,11 @@ class ContactUsBackendController extends Controller
     {
         try {
             $contactUs = ContactUs::first();
+
             return view('admin.contact_us.index', compact('contactUs'));
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -37,12 +37,13 @@ class ContactUsBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -61,8 +62,8 @@ class ContactUsBackendController extends Controller
                 return redirect()->route('super_admin.contact_us-index')->with('danger', 'This data is not in the records');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -75,12 +76,13 @@ class ContactUsBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }
@@ -121,8 +123,8 @@ class ContactUsBackendController extends Controller
                 return redirect()->route('super_admin.contact_us-index')->with('danger', 'This record does not exist in the records');
             }
         } catch (\Throwable $th) {
-            $function_name =  $route->getActionName();
-            $check_old_errors = new SupportTicket();
+            $function_name = $route->getActionName();
+            $check_old_errors = new SupportTicket;
             $check_old_errors = $check_old_errors->select('*')->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
@@ -135,12 +137,13 @@ class ContactUsBackendController extends Controller
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
-                    'error_line' =>  $th->getLine(),
+                    'error_line' => $th->getLine(),
                 ]);
                 $end_error_ticket = $new_error_ticket;
             } else {
                 $end_error_ticket = $check_old_errors->first();
             }
+
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
     }

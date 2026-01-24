@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthBackendController extends Controller
 {
-
-
     // =================================================================
     // ===================== showLoginForm =============================
     // ===================== Created By:Ahmad Obeidat ==================
@@ -20,9 +18,9 @@ class AuthBackendController extends Controller
         if (Auth::guard('super_admin')->check()) {
             return redirect()->intended(route('super_admin.dashboard'));
         }
+
         return view('admin.auth.login');
     }
-
 
     // =================================================================
     // ===================== loginFormSubmit ===========================
@@ -41,13 +39,11 @@ class AuthBackendController extends Controller
             return redirect()->intended(route('super_admin.dashboard'));
         }
 
-
         // If unsuccessful
         return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors([
             'email' => 'Email or password is incorrect',
         ]);
     }
-
 
     // =================================================================
     // ===================== logout ====================================
