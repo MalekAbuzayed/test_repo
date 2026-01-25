@@ -163,8 +163,8 @@
 
                                                 {{-- select --}}
                                                 <td class="text-center">
-                                                    <input type="checkbox" class="selectedProducts" name="selectedProducts[]"
-                                                        value="{{ $product->id }}">
+                                                    <input type="checkbox" class="selectedProducts"
+                                                        name="selectedProducts[]" value="{{ $product->id }}">
                                                 </td>
                                             </tr>
                                         @endforeach

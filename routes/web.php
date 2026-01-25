@@ -14,6 +14,10 @@ use App\Http\Controllers\Backend\Admin\PrivacyPolicyBackendController;
 use App\Http\Controllers\Backend\Dashboard\DashboardBackendController;
 use App\Http\Controllers\Backend\Admin\TermsConditionBackendController;
 use App\Http\Controllers\Backend\Admin\ContactUsRequestBackendController;
+use App\Http\Controllers\User\AboutUsController;
+use App\Http\Controllers\User\ContactUsController;
+use App\Http\Controllers\User\FAQController;
+use App\Http\Controllers\User\ProductController;
 
 Route::get('/login', [AuthBackendController::class, 'showLoginForm'])->name('login');
 Route::get('/admin', [AuthBackendController::class, 'showLoginForm'])->name('welcome');
@@ -192,7 +196,8 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
 
 // -------------------------------------------------------- User Routes --------------------------------------------------------------------
 Route::get('/', [SessionController::class, 'index'])->name('index');
-Route::get('/about', [SessionController::class, 'index'])->name('about');
-Route::get('/contact_us', [SessionController::class, 'index'])->name('contact_us');
-Route::get('/faq', [SessionController::class, 'index'])->name('faq');
-Route::get('/products', [SessionController::class, 'index'])->name('products');
+Route::get('/about', [AboutUsController::class, 'index'])->name('about');
+Route::get('/contact_us', [ContactUsController::class, 'index'])->name('contact_us');
+Route::get('/faq', [FAQController::class, 'index'])->name('faq');
+Route::get('/products', [ProductController::class, 'index'])->name('products');
+Route::get('/product', [ProductController::class, 'show'])->name('product');

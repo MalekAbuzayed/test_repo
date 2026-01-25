@@ -13,6 +13,8 @@
     <meta name="robots" content="noindex,nofollow">
     <title>Magic Energy</title>
     <link rel="stylesheet" href="{{ asset('public/style_files/user/layout_style.css') }}">
+    @yield('styles')
+
 
 </head>
 
