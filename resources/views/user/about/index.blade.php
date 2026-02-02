@@ -1,110 +1,6 @@
 @extends('user.layouts.app')
 
 @section('content')
-<style>
-        :root {
-            --primary-color: #c52c26;
-            --secondary-color: #555555;
-            --light-color: #fff;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--secondary-color);
-        }
-
-        .section-title {
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .section-subtitle {
-            color: var(--secondary-color);
-            opacity: 0.8;
-            margin-bottom: 2rem;
-        }
-
-        .bg-primary-custom {
-            background-color: var(--primary-color);
-        }
-
-        .text-primary-custom {
-            color: var(--primary-color);
-        }
-
-        .btn-primary-custom {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: var(--light-color);
-        }
-
-        .btn-primary-custom:hover {
-            background-color: #a32420;
-            border-color: #a32420;
-        }
-
-        .icon-box {
-            width: 80px;
-            height: 80px;
-            background-color: var(--primary-color);
-            color: var(--light-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin: 0 auto 1.5rem;
-        }
-
-        .goal-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
-        }
-
-        .goal-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(197, 44, 38, 0.15);
-        }
-
-        .team-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .team-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .team-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .vision-box {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #a32420 100%);
-            color: var(--light-color);
-            border-radius: 15px;
-            padding: 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .vision-box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-</style>
 <!-- Who We Are Section -->
     <section class="py-5 bg-light">
         <div class="container">
@@ -266,4 +162,111 @@
         </div>
     </section>
 
+@endsection
+
+@section('styles_about')
+<style>
+        :root {
+            --primary-color: #c52c26;
+            --secondary-color: #555555;
+            --light-color: #fff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--secondary-color);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--secondary-color);
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        .bg-primary-custom {
+            background-color: var(--primary-color);
+        }
+
+        .text-primary-custom {
+            color: var(--primary-color);
+        }
+
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--light-color);
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #a32420;
+            border-color: #a32420;
+        }
+
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .goal-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(197, 44, 38, 0.15);
+        }
+
+        .team-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .vision-box {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #a32420 100%);
+            color: var(--light-color);
+            border-radius: 15px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vision-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+</style>
 @endsection
