@@ -113,35 +113,6 @@
 
                                         </div>
                                     </div>
-
-                                    {{-- image  --}}
-                                    <div class="col-md-6 mb-3">
-                                        <label class="text-dark font-weight-medium mb-3" for="validationServer01">About Us
-                                            Image  : <strong class="text-danger">
-                                                @error('image')
-                                                    - {{ $message }}
-                                                @enderror
-                                            </strong></label>
-                                        <br>
-                                        {{-- <label style="color: red">Recommnded Dimensions are :529px * 500px</label> --}}
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text mdi mdi-cloud-upload"></span>
-                                            </div>
-                                            <input type="file" name="image" class="form-control"
-                                                id="validationServer01">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        @if (isset($aboutUs->image) && $aboutUs->getRawOriginal('image') && file_exists($aboutUs->getRawOriginal('image')))
-                                            <img src="{{ asset($aboutUs->image) }}" width="100" height="100"
-                                                style="border-radius: 10px; border:solid 1px black;">
-                                        @else
-                                            <img src="{{ asset('style_files\images\notfound.png') }}" width="100"
-                                                height="100" style="border-radius: 10px; border:solid 1px black;">
-                                        @endif
-                                    </div>
                                 </div>
 
 

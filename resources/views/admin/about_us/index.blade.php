@@ -30,24 +30,6 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="image-container-About-Us">
-                            {{-- Image --}}
-                            <label>
-                                <span>
-                                    Image  :
-                                </span>
-                            </label>
-                            @if (isset($aboutUs) && $aboutUs->image && file_exists($aboutUs->image))
-                                <img src="{{ asset($aboutUs->image) }}" alt="Image"
-                                    class="img-thumbnail image-preview">
-                            @else
-                                <img src="{{ asset('style_files/images/notfound.png') }}" alt="Image"
-                                    class="img-thumbnail image-preview">
-                            @endif
-                        </div>
-                    </div>
-                    <br>
                     <div class="col-md-8">
                         {{-- Details --}}
                         <div class="row">
