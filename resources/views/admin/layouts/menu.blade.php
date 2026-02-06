@@ -43,6 +43,34 @@
                             </a>
                         </li>
 
+                        {{-- Our Vision --}}  {{-- <-- هذا جديد --}}
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark"
+                                href="{{ route('super_admin.our_vision-index') }}">
+                                <i class="mdi mdi-eye-outline"></i>
+                                <span>Our Vision</span>
+                            </a>
+                        </li>
+
+                        {{-- Our Goals --}}  {{-- <-- هذا جديد --}}
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark"
+                                href="{{ route('super_admin.our_goals-index') }}">
+                                <i class="mdi mdi-target"></i>
+                                <span>Our Goals</span>
+                            </a>
+                        </li>
+
+
+                        {{-- Team Members --}}
+                        <li class="sidebar-item">
+                            <a class="sidebar-link waves-effect waves-dark"
+                                href="{{ route('super_admin.team_members-index') }}">
+                            <i class="mdi mdi-account-multiple"></i>
+                                <span>Team Members</span>
+                            </a>
+                        </li>
+
                         {{-- contact us --}}
                         <li class="sidebar-item">
                             <a class="sidebar-link waves-effect waves-dark"

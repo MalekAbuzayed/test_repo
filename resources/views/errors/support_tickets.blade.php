@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Blue Ray For Web Solutions</title>
+    <title>GoodWe</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
@@ -74,7 +74,7 @@
                 <img class="img-thumbnail image-preview " style="border: 1px solid #3ea23e; width: 20% !important;" src="{{ asset('images_default/style_files/logo/blueray_logo.jpg') }}" alt="">
             </div>
             <div class="m-b-md-12">
-                <h1 style="color: blue;">Blue Ray For Web Solutions</h1>
+                <h1 style="color: blue;">GoodWe</h1>
                 <hr>
                 <h1 style="color: blue;">Ticket Number : ( @isset ($end_error_ticket){{ $end_error_ticket->id }}@endisset )</h1>
                 <hr>
