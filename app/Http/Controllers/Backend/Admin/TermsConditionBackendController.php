@@ -15,7 +15,7 @@ class TermsConditionBackendController extends Controller
 {
     // ========================================================================
     // =========================== index Function =============================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function index(Request $request, Route $route)
     {
@@ -51,7 +51,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // =========================== Create Function ============================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function create(Route $route)
     {
@@ -89,7 +89,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // =========================== Store Function =============================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function store(StoreTermsConditoinsFormRequest $request, Route $route)
     {
@@ -137,7 +137,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ============================ Show Function =============================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function show($id, Route $route)
     {
@@ -176,7 +176,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ============================ Edit Function =============================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function edit($id, Route $route)
     {
@@ -215,7 +215,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // =========================== Update Function ============================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function update($id, UpdateTermsConditoinsFormRequest $request, Route $route)
     {
@@ -268,7 +268,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ======================== Soft Delete Function ==========================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function softDelete($id, Route $route)
     {
@@ -311,7 +311,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ====================== Show Soft Delete Function =======================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function showSoftDelete(Request $request, Route $route)
     {
@@ -348,7 +348,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ==================== Soft Delete Restore Function ======================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function softDeleteRestore($id, Route $route)
     {
@@ -391,7 +391,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ====================== Active/Inactive Single ==========================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function activeInactiveSingle($id, Route $route)
     {
@@ -437,7 +437,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ======================== Soft Delete Selected Function =================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function softDeleteSelected(Request $request, Route $route)
     {
@@ -488,7 +488,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ======================== Soft Delete Restore Selected Function =========
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function softDeleteRestoreSelected(Request $request, Route $route)
     {
@@ -537,7 +537,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ======================== Active Selected Function ======================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function activeSelected(Request $request, Route $route)
     {
@@ -587,7 +587,7 @@ class TermsConditionBackendController extends Controller
 
     // ========================================================================
     // ======================== Inactive Selected Function ====================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function inactiveSelected(Request $request, Route $route)
     {

@@ -18,6 +18,10 @@ use App\Http\Controllers\User\AboutUsController;
 use App\Http\Controllers\User\ContactUsController;
 use App\Http\Controllers\User\FAQController;
 use App\Http\Controllers\User\ProductController;
+use App\Http\Controllers\Backend\Admin\OurVisionBackendController;
+use App\Http\Controllers\Backend\Admin\OurGoalBackendController;
+use App\Http\Controllers\Backend\Admin\TeamMemberBackendController;
+
 
 Route::get('/login', [AuthBackendController::class, 'showLoginForm'])->name('login');
 Route::get('/admin', [AuthBackendController::class, 'showLoginForm'])->name('welcome');
@@ -38,6 +42,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         // Support Tickets :
         // Created By:Ayhm, Malek, Abdalah
         // ==============================================================================
+
         Route::group(['prefix' => 'support_tickets'], function () {
             Route::get('/index', [SupportBackendController::class, 'index'])->name('support_tickets-index');
             Route::get('destroy/{id}', [SupportBackendController::class, 'destroy'])->name('support_tickets-destroy');
@@ -46,6 +51,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         // Users :
         // Created By:Ayhm, Malek, Abdalah
         // ==============================================================================
+
         Route::group(['prefix' => 'users'], function () {
             Route::get('/index', [UserBackendController::class, 'index'])->name('users-index');
             Route::get('/create', [UserBackendController::class, 'create'])->name('users-create');
@@ -65,17 +71,60 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // about_us :
-        // Created By Ayhm, Malek, Abdalah
+        // Created By Ayhm Rahhal
         // ==============================================================================
+
         Route::group(['prefix' => 'about_us'], function () {
             Route::get('/index', [AboutUsBackendController::class, 'index'])->name('about_us-index');
             Route::get('edit/{id}', [AboutUsBackendController::class, 'edit'])->name('about_us-edit');
             Route::post('update/{id}', [AboutUsBackendController::class, 'update'])->name('about_us-update');
         });
 
-        // contact_us :
-        // Created By Ayhm, Malek, Abdalah
+        // our_vision :
+        // Created By Ayhm Rahhal
         // ==============================================================================
+
+        Route::group(['prefix' => 'our_vision'], function () {
+            Route::get('/index', [OurVisionBackendController::class, 'index'])->name('our_vision-index');
+            Route::get('edit/{id}', [OurVisionBackendController::class, 'edit'])->name('our_vision-edit');
+            Route::post('update/{id}', [OurVisionBackendController::class, 'update'])->name('our_vision-update');
+        });
+
+        // our_goals :
+        // Created By Ayhm Rahhal
+        // ==============================================================================
+
+        Route::group(['prefix' => 'our_goals'], function () {
+            Route::get('/index', [OurGoalBackendController::class, 'index'])->name('our_goals-index');
+            Route::get('/create', [OurGoalBackendController::class, 'create'])->name('our_goals-create');
+            Route::post('/store', [OurGoalBackendController::class, 'store'])->name('our_goals-store');
+            Route::get('show/{id}', [OurGoalBackendController::class, 'show'])->name('our_goals-show');
+            Route::get('edit/{id}', [OurGoalBackendController::class, 'edit'])->name('our_goals-edit');
+            Route::post('update/{id}', [OurGoalBackendController::class, 'update'])->name('our_goals-update');
+            Route::get('softDelete/{id}', [OurGoalBackendController::class, 'softDelete'])->name('our_goals-softDelete');
+            Route::get('/showSoftDelete', [OurGoalBackendController::class, 'showSoftDelete'])->name('our_goals-showSoftDelete');
+            Route::get('softDeleteRestore/{id}', [OurGoalBackendController::class, 'softDeleteRestore'])->name('our_goals-softDeleteRestore');
+            Route::get('/activeInactiveSingle/{id}', [OurGoalBackendController::class, 'activeInactiveSingle'])->name('our_goals-activeInactiveSingle');
+        });
+
+        // team_members :
+Route::group(['prefix' => 'team_members'], function () {
+    Route::get('/index', [TeamMemberBackendController::class, 'index'])->name('team_members-index');
+    Route::get('/create', [TeamMemberBackendController::class, 'create'])->name('team_members-create');
+    Route::post('/store', [TeamMemberBackendController::class, 'store'])->name('team_members-store');
+    Route::get('show/{id}', [TeamMemberBackendController::class, 'show'])->name('team_members-show');
+    Route::get('edit/{id}', [TeamMemberBackendController::class, 'edit'])->name('team_members-edit');
+    Route::post('update/{id}', [TeamMemberBackendController::class, 'update'])->name('team_members-update');
+    Route::get('softDelete/{id}', [TeamMemberBackendController::class, 'softDelete'])->name('team_members-softDelete');
+    Route::get('/showSoftDelete', [TeamMemberBackendController::class, 'showSoftDelete'])->name('team_members-showSoftDelete');
+    Route::get('softDeleteRestore/{id}', [TeamMemberBackendController::class, 'softDeleteRestore'])->name('team_members-softDeleteRestore');
+    Route::get('/activeInactiveSingle/{id}', [TeamMemberBackendController::class, 'activeInactiveSingle'])->name('team_members-activeInactiveSingle');
+});
+
+        // contact_us :
+        // Created By Ayhm Rahhal
+        // ==============================================================================
+
         Route::group(['prefix' => 'contact_us'], function () {
             Route::get('/index', [ContactUsBackendController::class, 'index'])->name('contact_us-index');
             Route::get('edit/{id}', [ContactUsBackendController::class, 'edit'])->name('contact_us-edit');
@@ -83,8 +132,9 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // contact_us_requests :
-        // Created By Ayhm, Malek, Abdalah
+        // Created By Ayhm Rahhal
         // ==============================================================================
+
         Route::group(['prefix' => 'contact_us_requests'], function () {
             Route::get('/index', [ContactUsRequestBackendController::class, 'index'])->name('contact_us_requests-index');
             Route::get('destroyMessage/{id}', [ContactUsRequestBackendController::class, 'destroyMessage'])->name('contact_us_requests-destroyMessage');
@@ -93,6 +143,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         // privacy_policies
         // Created By Ayhm, Malek, Abdalah
         // ==============================================================================
+
         Route::group(['prefix' => 'privacy_policies'], function () {
             Route::get('/index', [PrivacyPolicyBackendController::class, 'index'])->name('privacy_policies-index');
             Route::get('/create', [PrivacyPolicyBackendController::class, 'create'])->name('privacy_policies-create');
@@ -113,6 +164,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         // terms_and_conditions
         // Created By Ayhm, Malek, Abdalah
         // ==============================================================================
+
         Route::group(['prefix' => 'terms_and_conditions'], function () {
             Route::get('/index', [TermsConditionBackendController::class, 'index'])->name('terms_and_conditions-index');
             Route::get('/create', [TermsConditionBackendController::class, 'create'])->name('terms_and_conditions-create');
@@ -133,6 +185,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         // Slider Routes :
         // Created By Ayhm, Malek, Abdalah
         // ==============================================================================
+
         Route::group(['prefix' => 'sliders'], function () {
             Route::get('/index', [SliderBackendController::class, 'index'])->name('sliders-index');
             Route::get('/create', [SliderBackendController::class, 'create'])->name('sliders-create');
@@ -153,6 +206,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         // Admins :
         // Created By:Ayhm, Malek, Abdalah
         // ==============================================================================
+
         Route::group(['prefix' => 'admins'], function () {
             Route::get('/index', [AdminBackendController::class, 'index'])->name('admins-index');
             Route::get('/create', [AdminBackendController::class, 'create'])->name('admins-create');

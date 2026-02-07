@@ -19,14 +19,19 @@ class UpdateAboutUsFormRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-            'title_ar' => 'required',
-            'title_en' => 'required',
-            'description_ar' => 'required',
-            'description_en' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ];
-    }
+    public function rules()
+{
+    return [
+        'title_ar' => 'required|string|max:255',
+        'title_en' => 'required|string|max:255',
+        'subtitle_ar' => 'nullable|string|max:255',
+        'subtitle_en' => 'nullable|string|max:255',
+        'description_ar' => 'required|string',
+        'description_en' => 'required|string',
+        'bold_description_ar' => 'nullable|string',
+        'bold_description_en' => 'nullable|string',
+        'icon' => 'nullable|string|max:100', 
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ];
+}
 }

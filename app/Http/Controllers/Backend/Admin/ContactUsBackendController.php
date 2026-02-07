@@ -14,7 +14,7 @@ class ContactUsBackendController extends Controller
 {
     // ========================================================================
     // =========================== index Function =============================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function index(Request $request, Route $route)
     {
@@ -50,7 +50,7 @@ class ContactUsBackendController extends Controller
 
     // ========================================================================
     // ============================ Edit Function =============================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function edit($id, Route $route)
     {
@@ -89,7 +89,7 @@ class ContactUsBackendController extends Controller
 
     // ========================================================================
     // =========================== Update Function ============================
-    // =========================Created By :Ahmad Abdulmonem Obeidat ==========
+    // =========================Created By :Ayhm Rahhal ==========
     // ========================================================================
     public function update($id, UpdateContactUsFormRequest $request, Route $route)
     {
