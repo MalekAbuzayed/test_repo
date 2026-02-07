@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Backend\Admin;
 
 use App\Models\Product;
+use App\Models\Specification;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\SupportTicket;
 use Illuminate\Routing\Route;
@@ -99,14 +101,43 @@ class ProductBackendController extends Controller
     public function store(StoreProductFormRequest $request, Route $route)
     {
         try {
+            $typeValue = $request->type;
+            $typeToCategory = [
+                'batteries' => 'Batteries',
+                'hybrid' => 'Hybrid Inverter',
+                'onGrid' => 'On Grid Inverter',
+                'pv-module' => 'PV-Module',
+                'other' => 'Other',
+            ];
+            $categoryTitle = $typeToCategory[$typeValue] ?? $typeValue;
+
+            $categoryId = $request->input('category_id');
+            if (!$categoryId && $categoryTitle) {
+                $category = Category::firstOrCreate(
+                    ['title' => $categoryTitle],
+                    ['status' => '1']
+                );
+                $categoryId = $category->id;
+            }
+
+            $subcategory = $request->input('subcategory');
+            if (!$subcategory) {
+                $subcategory = $categoryTitle ?: ($typeValue ?: 'General');
+            }
+
             // Prepare Data :
             $created_data = [
                 'name' => $request->name,
                 'type' => $request->type,
+                'category_id' => $categoryId,
+                'subcategory' => $subcategory,
                 'title' => $request->title,
                 'description' => $request->description,
                 'status' => $request->status,
             ];
+
+            //request category_id,product_id and specs to store them in the specs table
+            // we need to find a way to store the specifications that are rendered depending on the selected type / category
 
             // Upload Image Section :
             if (isset($request->image)) {
@@ -125,8 +156,37 @@ class ProductBackendController extends Controller
             }
 
             // Store in DB :
-            DB::transaction(function () use ($created_data) {
-                Product::create($created_data);
+            DB::transaction(function () use ($created_data, $request) {
+                $product = Product::create($created_data);
+
+                // Specifications
+                $specTitles = $request->input('spec_titles', []);
+                $specValues = $request->input('spec_values', []);
+
+                $categoryId = $product->category_id ?? $categoryId ?? 0;
+
+                $specRows = [];
+                foreach ($specTitles as $index => $title) {
+                    $title = trim((string) $title);
+                    $value = trim((string) ($specValues[$index] ?? ''));
+
+                    if ($title === '' || $value === '') {
+                        continue;
+                    }
+
+                    $specRows[] = [
+                        'category_id' => $categoryId,
+                        'product_id' => $product->id,
+                        'spec_title' => $title,
+                        'spec_desc' => $value,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                if (!empty($specRows)) {
+                    Specification::insert($specRows);
+                }
             });
 
             return redirect()->route('super_admin.products-index')->with('success', 'Record Has Been Added Successfully');

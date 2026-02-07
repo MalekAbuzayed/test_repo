@@ -15,13 +15,12 @@
                     <span class="eyebrow">PRODUCTS</span>
                     <h2>Products Catalog</h2>
                     <p class="subtext products-sub">
-                        Placeholder items aligned to the products schema: name, type, title, description, image, file,
-                        status.
+                        Explore our latest products and specifications.
                     </p>
                 </div>
 
                 <div class="products-head-right">
-                    <div class="results-pill">3 Products</div>
+                    <div class="results-pill">{{ $products->count() }} Products</div>
                 </div>
             </div>
 
@@ -71,8 +70,8 @@
                 <section class="products-main" aria-label="Products list">
                     <div class="products-toolbar">
                         <div class="search-wrap">
-                            <input class="search-input" type="search"
-                                placeholder="Search products (name, title, type...)" autocomplete="off" />
+                            <input class="search-input" type="search" placeholder="Search products (name, title, type...)"
+                                autocomplete="off" />
                         </div>
 
                         <div class="toolbar-actions">
@@ -81,71 +80,59 @@
                     </div>
 
                     <div class="products-grid">
-                    <article class="product-card">
-                        <div class="product-media">
-                            <span class="product-badge status-active">Active</span>
-                            <span class="product-image-label">Image: atlas-550.jpg</span>
-                            <img src="https://picsum.photos/seed/solar-panel/900/650" alt="Solar panel placeholder" />
-                        </div>
-                        <div class="product-body">
-                            <p class="product-type">Type: panels</p>
-                            <h3 class="product-title">Atlas 550W Mono PERC</h3>
-                            <p class="product-name">Name: atlas-550-mono</p>
-                            <p class="product-desc">
-                                High-efficiency panel designed for commercial rooftops and large installations.
-                            </p>
-                            <dl class="product-fields">
-                                <div class="field">
-                                    <dt>File</dt>
-                                    <dd><a class="file-link" href="#">atlas-550-specs.pdf</a></dd>
+                        @forelse ($products as $product)
+                            @php
+                                $hasImage = $product->image && file_exists($product->image);
+                                $filePath = $product->file ? str_replace('\\', '/', $product->file) : null;
+                                $hasFile =
+                                    $filePath &&
+                                    (file_exists(public_path($filePath)) || file_exists(base_path($filePath)));
+                                $fileUrl = $hasFile ? route('product.file', ['id' => $product->id]) : null;
+                            @endphp
+                            <article class="product-card">
+                                <div class="product-media">
+                                    @if ($hasImage)
+                                        <img src="{{ asset($product->image) }}"
+                                            alt="{{ $product->title ?? $product->name }}" />
+                                    @else
+                                        <img src="https://picsum.photos/seed/product-{{ $product->id }}/900/650"
+                                            alt="Product placeholder" />
+                                    @endif
                                 </div>
-                            </dl>
-                        </div>
-                    </article>
-
-                    <article class="product-card">
-                        <div class="product-media">
-                            <span class="product-badge status-active">Active</span>
-                            <span class="product-image-label">Image: helios-8k.jpg</span>
-                            <img src="https://picsum.photos/seed/inverter/900/650" alt="Inverter placeholder" />
-                        </div>
-                        <div class="product-body">
-                            <p class="product-type">Type: inverters</p>
-                            <h3 class="product-title">Helios 8k Hybrid Inverter</h3>
-                            <p class="product-name">Name: helios-8k-hybrid</p>
-                            <p class="product-desc">
-                                Grid-tied hybrid inverter with battery-ready ports and smart monitoring.
-                            </p>
-                            <dl class="product-fields">
-                                <div class="field">
-                                    <dt>File</dt>
-                                    <dd><a class="file-link" href="#">helios-8k-datasheet.pdf</a></dd>
+                                <div class="product-body">
+                                    <p class="product-type">Type: {{ $product->type }}</p>
+                                    <h3 class="product-title">
+                                        <a href="{{ route('product', ['id' => $product->id]) }}">
+                                            {{ $product->title ?? $product->name }}
+                                        </a>
+                                    </h3>
+                                    <p class="product-name">Name: {{ $product->name }}</p>
+                                    <p class="product-desc">
+                                        {{ \Illuminate\Support\Str::limit($product->description, 140) }}
+                                    </p>
+                                    <dl class="product-fields">
+                                        <div class="field">
+                                            <dt>File</dt>
+                                            <dd>
+                                                @if ($hasFile)
+                                                    <a class="file-link" href="{{ $fileUrl }}" target="_blank">
+                                                        {{ basename($filePath) }}
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">Not available</span>
+                                                @endif
+                                            </dd>
+                                        </div>
+                                        <div class="field">
+                                            <dt>Category</dt>
+                                            <dd>{{ optional($product->category)->title ?? '—' }}</dd>
+                                        </div>
+                                    </dl>
                                 </div>
-                            </dl>
-                        </div>
-                    </article>
-
-                    <article class="product-card">
-                        <div class="product-media">
-                            <span class="product-badge status-inactive">Inactive</span>
-                            <span class="product-image-label">Image: pulse-10kwh.jpg</span>
-                            <img src="https://picsum.photos/seed/battery/900/650" alt="Battery placeholder" />
-                        </div>
-                        <div class="product-body">
-                            <p class="product-type">Type: batteries</p>
-                            <h3 class="product-title">Pulse 10kWh Battery Pack</h3>
-                            <p class="product-name">Name: pulse-10kwh</p>
-                            <p class="product-desc">
-                                Stackable lithium storage system with integrated BMS and safety monitoring.
-                            </p>
-                            <dl class="product-fields">
-                                <div class="field">
-                                    <dt>File</dt>
-                                    <dd><a class="file-link" href="#">pulse-10kwh-manual.pdf</a></dd>
-                                </div>
-                            </dl>
-                        </div>
-                    </article>
+                            </article>
+                        @empty
+                            <div class="col-12 text-muted">No products found.</div>
+                        @endforelse
                     </div>
                 </section>
             </div>

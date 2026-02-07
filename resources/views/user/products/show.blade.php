@@ -1,61 +1,103 @@
 @extends('user.layouts.app')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('public/style_files/user/product.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/style_files/user/product.css') }}?v=2">
 @endsection
 
 @section('content')
     <!-- ================== PRODUCT PAGE ================== -->
     <main class="section product-page" id="product">
         <div class="container">
+            @php
+                $hasImage = $product->image && file_exists($product->image);
+                $filePath = $product->file ? str_replace('\\', '/', $product->file) : null;
+                $hasFile = $filePath && (file_exists(public_path($filePath)) || file_exists(base_path($filePath)));
+                $fileUrl = $hasFile ? route('product.file', ['id' => $product->id]) : null;
+                $isPdf = $hasFile && $filePath && \Illuminate\Support\Str::endsWith(strtolower($filePath), '.pdf');
+            @endphp
 
             <!-- Header -->
             <div class="product-head reveal">
                 <div>
-                    <span class="eyebrow">PRODUCT</span>
-                    <h2>Atlas 550W Mono PERC</h2>
+                    <span class="eyebrow">Placeholder for product hierarchy - this will be a link</span>
+                    <h2>{{ $product->title ?? $product->name }}</h2>
                     <p class="subtext product-sub">
-                        Placeholder details aligned to the products schema: name, type, title, description, image, file,
-                        status.
+                        {{ \Illuminate\Support\Str::limit($product->description, 180) }}
                     </p>
-                </div>
-
-                <div class="product-head-right">
-                    <div class="results-pill">Status: Active</div>
                 </div>
             </div>
 
             <section class="product-detail reveal" aria-label="Product details">
                 <div class="product-detail-media">
-                    <span class="product-badge status-active">Active</span>
-                    <span class="product-image-label">Image: atlas-550.jpg</span>
-                    <img src="https://picsum.photos/seed/solar-panel/1200/800" alt="Solar panel placeholder" />
+                    @if ($hasImage)
+                        <img src="{{ asset($product->image) }}" alt="{{ $product->title ?? $product->name }}" />
+                    @else
+                        <img src="https://picsum.photos/seed/product-{{ $product->id }}/1200/800"
+                            alt="Product placeholder" />
+                    @endif
                 </div>
 
                 <div class="product-detail-body">
-                    <p class="product-type">Type: panels</p>
-                    <h3 class="product-title">Atlas 550W Mono PERC</h3>
-                    <p class="product-name">Name: atlas-550-mono</p>
+                    <p class="product-type">Type: {{ $product->type }}</p>
+                    <h3 class="product-title">{{ $product->title ?? $product->name }}</h3>
+                    <p class="product-name">Name: {{ $product->name }}</p>
                     <p class="product-desc">
-                        High-efficiency panel designed for commercial rooftops and large installations. Built for
-                        durability, high output, and long-term performance under demanding conditions.
+                        {{ $product->description }}
                     </p>
 
                     <dl class="product-fields">
                         <div class="field">
                             <dt>File</dt>
-                            <dd><a class="file-link" href="#">atlas-550-specs.pdf</a></dd>
+                            <dd>
+                                @if ($hasFile)
+                                    <a class="file-link" href="{{ $fileUrl }}" target="_blank">
+                                        {{ basename($filePath) }}
+                                    </a>
+                                @else
+                                    <span class="text-muted">Not available</span>
+                                @endif
+                            </dd>
                         </div>
                         <div class="field">
                             <dt>Type</dt>
-                            <dd>panels</dd>
+                            <dd>{{ $product->type }}</dd>
+                        </div>
+                        <div class="field">
+                            <dt>Category</dt>
+                            <dd>{{ $category?->title ?? '—' }}</dd>
                         </div>
                     </dl>
 
                     <div class="product-detail-actions">
                         <a href="#" class="btn btn-primary">Request Quote</a>
-                        <a href="#" class="btn btn-outline">Download Specs</a>
+                        @if ($hasFile)
+                            <a href="{{ $fileUrl }}" class="btn btn-outline" target="_blank">Download Specs</a>
+                        @else
+                            <a href="#" class="btn btn-outline disabled" aria-disabled="true">Download Specs</a>
+                        @endif
                     </div>
+                </div>
+            </section>
+
+            <section class="product-specs reveal" aria-label="Product specifications">
+                <div class="product-pdf-head">
+                    <h3>Specifications</h3>
+                    <p class="product-pdf-sub">Technical details for this product.</p>
+                </div>
+                <div class="product-pdf-frame">
+                    <dl class="product-fields">
+                        @forelse ($specs as $spec)
+                            <div class="field">
+                                <dt>{{ $spec->spec_title }}</dt>
+                                <dd>{{ $spec->spec_desc }}</dd>
+                            </div>
+                        @empty
+                            <div class="field">
+                                <dt>Specs</dt>
+                                <dd class="text-muted">No specifications available.</dd>
+                            </div>
+                        @endforelse
+                    </dl>
                 </div>
             </section>
 
@@ -63,13 +105,21 @@
                 <div class="product-pdf-head">
                     <h3>Product File (PDF)</h3>
                     <p class="product-pdf-sub">
-                        Placeholder area for the PDF file that will be loaded via the controller.
+                        @if ($hasFile)
+                            {{ basename($filePath) }}
+                        @else
+                            No file available.
+                        @endif
                     </p>
                 </div>
                 <div class="product-pdf-frame">
-                    <div class="product-pdf-placeholder">
-                        PDF preview will appear here once the file is available.
-                    </div>
+                    @if ($isPdf)
+                        <iframe src="{{ $fileUrl }}" title="Product PDF"></iframe>
+                    @else
+                        <div class="product-pdf-placeholder">
+                            PDF preview will appear here once the file is available.
+                        </div>
+                    @endif
                 </div>
             </section>
 

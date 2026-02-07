@@ -19,6 +19,8 @@ class Product extends Model
     protected $fillable = [
         'name',
         'type',
+        'category_id',
+        'subcategory',
         'title',
         'description',
         'image',
@@ -46,9 +48,20 @@ class Product extends Model
             'batteries' => 'Batteries',
             'hybrid' => 'Hybrid',
             'onGrid' => 'OnGrid',
-            'others'=> 'Others',
+            'pv-module' => 'PV-Module',
+            'others' => 'Others',
         ];
 
         return $types[$value] ?? $value;
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function specifications()
+    {
+        return $this->hasMany(Specification::class);
     }
 }

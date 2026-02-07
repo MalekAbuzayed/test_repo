@@ -16,16 +16,18 @@ trait UploadPdfTrait
         // Generate a unique file name with the current timestamp
         $fileName = 'file_'.time().'.pdf';
 
+        $relativePath = rtrim($uploadLocation, '/\\').'/';
+        $absolutePath = public_path($relativePath);
+
         // Ensure the directory exists
-        if (! is_dir($uploadLocation)) {
-            mkdir($uploadLocation, 0777, true);
+        if (! is_dir($absolutePath)) {
+            mkdir($absolutePath, 0777, true);
         }
 
         // Store the file in the desired location
-        $uploadedFile->move($uploadLocation, $fileName);
-        $lastModified = $uploadLocation.DIRECTORY_SEPARATOR.$fileName;
+        $uploadedFile->move($absolutePath, $fileName);
 
-        // Return the properly formatted path
-        return $lastModified;
+        // Return a web-friendly path (relative to public)
+        return $relativePath.$fileName;
     }
 }

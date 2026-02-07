@@ -201,3 +201,4 @@ Route::get('/contact_us', [ContactUsController::class, 'index'])->name('contact_
 Route::get('/faq', [FAQController::class, 'index'])->name('faq');
 Route::get('/products', [ProductController::class, 'index'])->name('products');
 Route::get('/product', [ProductController::class, 'show'])->name('product');
+Route::get('/product/file/{id}', [ProductController::class, 'file'])->name('product.file');

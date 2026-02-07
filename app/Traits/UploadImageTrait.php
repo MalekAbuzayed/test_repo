@@ -10,7 +10,7 @@ trait UploadImageTrait
     // ================================================================
     // ================= Save File In Folder Function =================
     // ================================================================
-    // A new one with image resize (now when any image is uploaded, it will be resized to 100x35)
+    // A new one with optional image resize (when max sizes are provided)
     // $orginal_image = the image file
     // $upload_location = the location where the image will be saved
     // $maxWidth = the maximum width of the image
@@ -26,7 +26,14 @@ trait UploadImageTrait
     // $ratio = the ratio of the original width to the original height
     // $newImage = the new image resource
     // $source = the source image resource
-    public function saveFile($orginal_image, $upload_location, $maxWidth = 100, $maxHeight = 35)
+    public function saveFile(
+        $orginal_image,
+        $upload_location,
+        $maxWidth = null,
+        $maxHeight = null,
+        $jpegQuality = 85,
+        $pngCompression = 6
+    )
     {
         // Create directory if it doesn't exist
         if (! file_exists($upload_location)) {
@@ -41,15 +48,13 @@ trait UploadImageTrait
         // Get image details
         [$originalWidth, $originalHeight] = getimagesize($orginal_image->getPathname());
 
-        // Calculate new dimensions
-        $ratio = $originalWidth / $originalHeight;
-        $newWidth = $maxWidth;
-        $newHeight = $maxHeight ?: $maxWidth / $ratio;
-
-        if ($maxHeight && ! $maxWidth) {
-            $newHeight = $maxHeight;
-            $newWidth = $maxHeight * $ratio;
-        }
+        // Calculate new dimensions (preserve aspect ratio and prevent upscaling)
+        // If no max sizes are provided, keep original dimensions but re-encode for compression.
+        $targetWidth = $maxWidth ?: $originalWidth;
+        $targetHeight = $maxHeight ?: $originalHeight;
+        $scale = min($targetWidth / $originalWidth, $targetHeight / $originalHeight, 1);
+        $newWidth = (int) round($originalWidth * $scale);
+        $newHeight = (int) round($originalHeight * $scale);
 
         // Create new image
         $newImage = imagecreatetruecolor($newWidth, $newHeight);
@@ -62,9 +67,13 @@ trait UploadImageTrait
                 break;
             case 'png':
                 $source = imagecreatefrompng($orginal_image->getPathname());
+                imagealphablending($newImage, false);
+                imagesavealpha($newImage, true);
                 break;
             case 'gif':
                 $source = imagecreatefromgif($orginal_image->getPathname());
+                imagealphablending($newImage, false);
+                imagesavealpha($newImage, true);
                 break;
             default:
                 throw new \Exception('Unsupported image type');
@@ -76,10 +85,10 @@ trait UploadImageTrait
         switch ($img_ext) {
             case 'jpeg':
             case 'jpg':
-                imagejpeg($newImage, $last_image);
+                imagejpeg($newImage, $last_image, $jpegQuality);
                 break;
             case 'png':
-                imagepng($newImage, $last_image);
+                imagepng($newImage, $last_image, $pngCompression);
                 break;
             case 'gif':
                 imagegif($newImage, $last_image);

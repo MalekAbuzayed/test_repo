@@ -23,7 +23,7 @@ class UpdateProductFormRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'type' => 'required|in:other,batteries,hybrid,onGrid',
+            'type' => 'required|in:other,batteries,hybrid,onGrid,pv-module',
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',

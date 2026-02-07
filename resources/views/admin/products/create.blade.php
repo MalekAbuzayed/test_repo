@@ -51,7 +51,8 @@
                                             class="form-control border border-info @error('name') border-danger @enderror"
                                             id="tb-name" value="{{ old('name') }}" placeholder="Product Name">
                                         <label for="tb-name">
-                                            <i data-feather="package" class="feather-sm text-info fill-white me-2"></i>Product
+                                            <i data-feather="package"
+                                                class="feather-sm text-info fill-white me-2"></i>Product
                                             Name
                                             <strong class="text-danger">
                                                 @error('name')
@@ -95,23 +96,31 @@
                                     </div>
                                 </div>
 
-                                {{-- Type --}}
+                                {{-- Type / Category --}}
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <select name="type"
+                                        <select name="type" id="product-type"
                                             class="form-control form-select border border-info @error('type') border-danger @enderror custom_select_style">
                                             <option>--- Select Type ---</option>
                                             <option value="batteries" @if (old('type') == 'batteries') selected @endif>
                                                 Batteries</option>
-                                            <option value="hybrid" @if (old('type') == 'hybrid') selected @endif>Hybrid</option>
-                                            <option value="onGrid" @if (old('type') == 'onGrid') selected @endif>OnGrid</option>
-                                            <option value="other" @if (old('type') == 'other' || old('type') == null) selected @endif>
-                                                Other
+                                            <option value="hybrid" @if (old('type') == 'hybrid') selected @endif>
+                                                Hybrid Inverter
+                                            </option>
+                                            <option value="onGrid" @if (old('type') == 'onGrid') selected @endif>
+                                                On Grid Inverter
+                                            </option>
+                                            <option value="pv-module" @if (old('type') == 'pv-module') selected @endif>
+                                                PV-Module
                                             </option>
                                         </select>
                                     </div>
                                 </div>
-
+                                <div class="col-12">
+                                    <div class="row" id="specs-section">
+                                        <div class="col-12 text-muted small">Select a type to load specifications.</div>
+                                    </div>
+                                </div>
                                 {{-- Image --}}
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -164,8 +173,7 @@
                                                 @enderror
                                             </strong>
                                         </label>
-                                        <textarea name="description"
-                                            class="form-control border border-info @error('description') border-danger @enderror"
+                                        <textarea name="description" class="form-control border border-info @error('description') border-danger @enderror"
                                             id="description" placeholder="Product Description" rows="6">{{ old('description') }}</textarea>
                                     </div>
                                 </div>
@@ -197,21 +205,187 @@
     <script>
         // Initialize textarea with Summernote
         $(document).ready(function() {
-            $('#description').summernote({
-                height: 200,
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'italic', 'underline', 'clear']],
-                    ['fontname', ['fontname']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['height', ['height']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'hr']],
-                    ['view', ['fullscreen', 'codeview']],
-                    ['help', ['help']]
+            if ($.fn.summernote) {
+                $('#description').summernote({
+                    height: 200,
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'italic', 'underline', 'clear']],
+                        ['fontname', ['fontname']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['height', ['height']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture', 'hr']],
+                        ['view', ['fullscreen', 'codeview']],
+                        ['help', ['help']]
+                    ],
+                    placeholder: 'Enter product description here...'
+                });
+            }
+
+            const specsByType = {
+                'batteries': [
+                    'Rated Energy (kWh)',
+                    'Usable Energy (kWh)',
+                    'Nominal Voltage (V)',
+                    'Max. Continuous Charging Power (kW)',
+                    'Max. Continuous Discharging Power (kW)',
+                    'Peak Output Power (kW)',
+                    'Cycle Lifespan',
+                    'IP Rating',
+                    'Round Trip Efficiency',
+                    'Depth of Discharge'
                 ],
-                placeholder: 'Enter product description here...'
+                'hybrid': [
+                    'Max Input Voltage (V)',
+                    'MPPT Voltage Range (V)',
+                    'Start-up Voltage (V)',
+                    'Nominal Input Voltage (V)',
+                    'Max Input Current Per MPPT (A)',
+                    'Max Short Circuit Current Per MPPT (A)',
+                    'Number of MPP Trackers',
+                    'Number of Strings Per MPPT',
+                    'Number of Battery Input',
+                    'Nominal Battery Voltage (V)',
+                    'Battery Voltage Range (V)',
+                    'Max. Continuous Charging Current (A)',
+                    'Max. Continuous Discharging Current (A)',
+                    'Max. Charging Power (kW)',
+                    'Max. Discharging Power (kW)',
+                    'Nominal Output Power (W)',
+                    'Nominal Output Apparent Power (VA)',
+                    'Max. AC Active Power (W)',
+                    'Max. AC Apparent Power To Grid (VA)',
+                    'Max. AC Apperant power input From Grid (kVA)',
+                    'Nominal Output Voltage (V)',
+                    'AC Grid Frequency Range (Hz)',
+                    'Max. Output Current',
+                    'Max. Input Current',
+                    'Back-up Nominal Apparent Power (kVA)',
+                    'Max. Output Apparent Power without Grid (kVA)',
+                    'Max. Output Apparent Power with Grid (kVA)',
+                    'Nominal Output Voltage (V)',
+                    'Nominal Apparent Power from AC generator (kVA)',
+                    'Max. Apparent Power from AC generator (kVA)',
+                    'Input Voltage Range (V)',
+                    'Max. AC Current From AC generator (A)',
+                    'Resicdual Current Monitoring',
+                    'PV-Reverse Polarity',
+                    'AC (Overvoltage - Overcurrent - Short Circuit)',
+                    'DC & AC Surge Preotection',
+                    'AFCI Type 3 AI driven',
+                    'MAX. Efiiciency (%)',
+                    'EU Efficiency (%)',
+                    'IP Rating',
+                    'LED Screen',
+                    'Dimensions (mm)'
+                ],
+                'onGrid': [
+                    'Max Input Voltage (V)',
+                    'MPPT Voltage Range (V)',
+                    'Start-up Voltage (V)',
+                    'Nominal Input Voltage (V)',
+                    'Max Input Current Per MPPT (A)',
+                    'Max Short Circuit Current Per MPPT (A)',
+                    'Number of MPP Trackers',
+                    'Number of Strings Per MPPT',
+                    'Nominal Output Power (W)',
+                    'Nominal Output Apparent Power (VA)',
+                    'Max. AC Active Power (W)',
+                    'Max. AC Apparent Power (VA)',
+                    'Nominal Output Voltage (V)',
+                    'AC Grid Frequency Range (Hz)',
+                    'Max. Output Current',
+                    'Resicdual Current Monitoring',
+                    'PV-Reverse Polarity',
+                    'AC (Overvoltage - Overcurrent - Short Circuit)',
+                    'DC & AC Surge Preotection',
+                    'AFCI Type 3 AI driven',
+                    'MAX. Efiiciency (%)',
+                    'EU Efficiency (%)',
+                    'IP Rating',
+                    'LED Screen',
+                    'Dimensions (mm)'
+                ],
+                'pv-module': [
+                    'Maximum Power (Wp)',
+                    'Open Crcuit Voltage (Voc)',
+                    'Short Circuit Current (Isc)',
+                    'MPPT Voltage (Vmp)',
+                    'MPPT Current (Imp)',
+                    'Module Efficiency (%)',
+                    'Dimensions',
+                    'Warranty Against Manufacturing Defects',
+                    'Warranty Against Degradation',
+                    'Efficiency at year 30'
+                ]
+            };
+
+            const $typeSelect = $('#product-type');
+            const $specsSection = $('#specs-section');
+
+            const oldSpecTitles = @json(old('spec_titles', []));
+            const oldSpecValues = @json(old('spec_values', []));
+            const oldValueMap = {};
+
+            const titlesArray = Array.isArray(oldSpecTitles) ? oldSpecTitles : [];
+            const valuesArray = Array.isArray(oldSpecValues) ? oldSpecValues : [];
+
+            titlesArray.forEach((title, index) => {
+                if (!oldValueMap[title]) {
+                    oldValueMap[title] = [];
+                }
+                oldValueMap[title].push(valuesArray[index] || '');
+            });
+
+            const slugify = (value) => value.toString().toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+
+            const getOldValue = (label) => {
+                if (!oldValueMap[label] || oldValueMap[label].length === 0) {
+                    return '';
+                }
+                return oldValueMap[label].shift();
+            };
+
+            const renderSpecs = (type) => {
+                $specsSection.empty();
+
+                const specs = specsByType[type] || [];
+                if (specs.length === 0) {
+                    $specsSection.append(
+                        $('<div class="col-12 text-muted small">Select a type to load specifications.</div>')
+                    );
+                    return;
+                }
+
+                specs.forEach((label, index) => {
+                    const inputId = `spec-${slugify(type)}-${index}`;
+                    const value = getOldValue(label);
+
+                    const $col = $('<div class="col-md-6"></div>');
+                    const $group = $('<div class="mb-3"></div>');
+                    const $label = $('<label class="form-label"></label>').attr('for', inputId).text(label);
+                    const $titleInput = $('<input type="hidden" name="spec_titles[]">').val(label);
+                    const $valueInput = $('<input type="text" name="spec_values[]" class="form-control border border-info">')
+                        .attr('id', inputId)
+                        .attr('placeholder', label)
+                        .val(value);
+
+                    $group.append($label, $titleInput, $valueInput);
+                    $col.append($group);
+                    $specsSection.append($col);
+                });
+            };
+
+            renderSpecs($typeSelect.val());
+            $typeSelect.on('change', function() {
+                renderSpecs($(this).val());
+            });
+            $typeSelect.on('select2:select', function() {
+                renderSpecs($(this).val());
             });
         });
     </script>
