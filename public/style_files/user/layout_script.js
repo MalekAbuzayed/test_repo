@@ -22,7 +22,7 @@ if (slides.length && dots.length && heroTitle && heroSubtitle && heroBtn) {
         {
             title: "Power Your Home<br/>with Clean Energy.",
             subtitle: "High-efficiency solar solutions built for long-term performance.",
-            button: "Get a Free Quote",
+            button: "Get a Quote",
             link: "#contact"
         },
         {

@@ -21,7 +21,7 @@
 
         <!-- Stats Cards Row -->
         <div class="stats-container">
-             <!-- Products -->
+            <!-- Products -->
             <div class="stat-card stat-product">
                 <div class="stat-info">
                     <a href="{{ route('super_admin.products-index') }}">

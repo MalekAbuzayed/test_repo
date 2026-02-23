@@ -23,7 +23,7 @@
                 <p id="heroSubtitle">Reduce electricity bills with efficient solar systems.</p>
 
                 <div class="hero-actions">
-                    <a id="heroBtn" class="btn btn-primary btn-lg" href="#services">Explore Services</a>
+                    <a id="heroBtn" class="btn btn-lg" href="#services">Explore Services</a>
                 </div>
 
                 <div class="hero-dots" id="heroDots" aria-label="Slider dots">
@@ -34,23 +34,7 @@
             </div>
         </div>
 
-        <!-- mini strip under hero -->
-        <section class="mini-strip">
-            <div class="container mini-grid reveal">
-                <div class="mini-item">
-                    <span class="mini-icon">✓</span>
-                    <span>Free Consultation</span>
-                </div>
-                <div class="mini-item">
-                    <span class="mini-icon">✓</span>
-                    <span>Fast Installation</span>
-                </div>
-                <div class="mini-item">
-                    <span class="mini-icon">✓</span>
-                    <span>Warranty Included</span>
-                </div>
-            </div>
-        </section>
+
     </main>
 
     <!-- ================== ABOUT ================== -->
@@ -78,7 +62,7 @@
                 <div class="about-cards">
                     <div class="small-card">
                         <div class="small-icon">✳</div>
-                        <h4>Certified Installers</h4>
+                        <h4>Professional Installers</h4>
                         <p>Licensed professionals with years of expertise</p>
                     </div>
 
@@ -106,18 +90,17 @@
 
                     <!-- TOP RIGHT badge -->
                     <div class="badge badge-top">
-                        <div class="badge-ico">👥</div>
                         <div>
-                            <div class="badge-big"><span class="count" data-count="5000">0</span>+</div>
+                            <div class="badge-big"><span class="count" data-count="1111">0</span>+</div>
                             <div class="badge-sub">Happy Customers</div>
                         </div>
                     </div>
 
                     <!-- BOTTOM LEFT badge -->
                     <div class="badge badge-bottom">
-                        <div class="badge-ico">🏅</div>
+
                         <div>
-                            <div class="badge-big"><span class="count" data-count="10">0</span>+</div>
+                            <div class="badge-big"><span class="count" data-count="20">0</span>+</div>
                             <div class="badge-sub">Years Experience</div>
                         </div>
                     </div>
@@ -130,20 +113,12 @@
         <div class="stats-band reveal">
             <div class="container stats-grid">
                 <div class="stat">
-                    <div class="stat-num"><span class="count" data-count="5000">0</span>+</div>
+                    <div class="stat-num"><span class="count" data-count="1111">0</span>+</div>
                     <div class="stat-label">Installations</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-num"><span class="count" data-count="98">0</span>%</div>
-                    <div class="stat-label">Satisfaction Rate</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-num"><span class="count" data-count="25">0</span>MW</div>
-                    <div class="stat-label">Energy Generated</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-num"><span class="count" data-count="24">0</span>/7</div>
-                    <div class="stat-label">Customer Support</div>
+                    <div class="stat-num"><span class="count" data-count="2000">0</span>KWP</div>
+                    <div class="stat-label">Energy Generated For Home Installations</div>
                 </div>
             </div>
         </div>
@@ -164,14 +139,14 @@
             <div class="partners-card">
                 <h3>Our Trusted Partners</h3>
                 <div class="partners-row">
-                    <span class="partner">TTC</span>
-                    <span class="partner">SOLARCO</span>
-                    <span class="partner">GREENBUILD</span>
-                    <span class="partner">RETAIL</span>
-                    <span class="partner">ECO</span>
-                    <span class="partner">MANUFACTURING</span>
-                    <span class="partner">IMPERIAL</span>
-                    <span class="partner">ORBIT</span>
+                    <span class="partner">وزارة الأوقاف</span>
+                    <span class="partner">وزارة التربية والتعليم</span>
+                    <span class="partner">جامعة الإسراء</span>
+                    <span class="partner">سلسلة محامص كابولي</span>
+                    <span class="partner">مجلس الأعيان</span>
+                    <span class="partner">LE VENDOME HOTEL</span>
+                    <span class="partner">CROWN ACADEMY</span>
+                    <span class="partner">BVLGARI</span>
                 </div>
             </div>
         </div>
@@ -190,21 +165,20 @@
             </p>
 
             <div class="final-actions">
-                <a class="btn btn-white btn-lg" href="#contact">Get a Free Quote</a>
-                <a class="btn btn-outline-white btn-lg" href="tel:+15551234567">Call (555) 123-4567</a>
+                <a class="btn btn-outline-white btn-lg" href="tel:+15551234567">Call (06) 4163824</a>
             </div>
 
             <div class="final-metrics">
                 <div class="final-metric">
                     <div class="final-num">$0</div>
-                    <div class="final-label">Upfront Cost Options</div>
+                    <div class="final-label">Placeholder</div>
                 </div>
                 <div class="final-metric">
                     <div class="final-num"><span class="count" data-count="30">0</span>%</div>
-                    <div class="final-label">Federal Tax Credit</div>
+                    <div class="final-label">Placeholder</div>
                 </div>
                 <div class="final-metric">
-                    <div class="final-num"><span class="count" data-count="25">0</span> Years</div>
+                    <div class="final-num"><span class="count" data-count="30">0</span> Years</div>
                     <div class="final-label">Panel Warranty</div>
                 </div>
             </div>

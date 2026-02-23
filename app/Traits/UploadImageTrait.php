@@ -32,9 +32,9 @@ trait UploadImageTrait
         $maxWidth = null,
         $maxHeight = null,
         $jpegQuality = 85,
-        $pngCompression = 6
-    )
-    {
+        $pngCompression = 6,
+        $webpQuality = 85
+    ) {
         // Create directory if it doesn't exist
         if (! file_exists($upload_location)) {
             mkdir($upload_location, 0755, true);
@@ -42,8 +42,8 @@ trait UploadImageTrait
 
         $name_gen = hexdec(uniqid());
         $img_ext = strtolower($orginal_image->getClientOriginalExtension());
-        $img_name = $name_gen.'.'.$img_ext;
-        $last_image = $upload_location.$img_name;
+        $img_name = $name_gen . '.' . $img_ext;
+        $last_image = $upload_location . $img_name;
 
         // Get image details
         [$originalWidth, $originalHeight] = getimagesize($orginal_image->getPathname());
@@ -75,6 +75,14 @@ trait UploadImageTrait
                 imagealphablending($newImage, false);
                 imagesavealpha($newImage, true);
                 break;
+            case 'webp':
+                if (! function_exists('imagecreatefromwebp')) {
+                    throw new \Exception('WebP is not supported by the server GD extension');
+                }
+                $source = imagecreatefromwebp($orginal_image->getPathname());
+                imagealphablending($newImage, false);
+                imagesavealpha($newImage, true);
+                break;
             default:
                 throw new \Exception('Unsupported image type');
         }
@@ -92,6 +100,12 @@ trait UploadImageTrait
                 break;
             case 'gif':
                 imagegif($newImage, $last_image);
+                break;
+            case 'webp':
+                if (! function_exists('imagewebp')) {
+                    throw new \Exception('WebP is not supported by the server GD extension');
+                }
+                imagewebp($newImage, $last_image, $webpQuality);
                 break;
         }
 
@@ -128,14 +142,14 @@ trait UploadImageTrait
         }
 
         $img_ext_firstsearch = $orginal_image->getClientOriginalExtension();
-        $img_ext_tosearch = '.'.$img_ext_firstsearch;
+        $img_ext_tosearch = '.' . $img_ext_firstsearch;
         $img_search_name = str_replace($img_ext_tosearch, '', $original_name);
 
-        $check_old = DB::table($table_name)->where($table_column, 'like', '%'.$img_search_name.'%')->get();
+        $check_old = DB::table($table_name)->where($table_column, 'like', '%' . $img_search_name . '%')->get();
         $counter = $check_old->count();
 
         if ($counter > 0) {
-            $img_name = $img_search_name.'('.$counter.')';
+            $img_name = $img_search_name . '(' . $counter . ')';
         } else {
             $img_name = $img_search_name;
         }
@@ -172,8 +186,8 @@ trait UploadImageTrait
         }
 
         $file_name = $img_name;
-        $image = imagewebp($imagejpg, $upload_location.$file_name.'.webp');
+        $image = imagewebp($imagejpg, $upload_location . $file_name . '.webp');
 
-        return $upload_location.$file_name.'.webp';
+        return $upload_location . $file_name . '.webp';
     }
 }

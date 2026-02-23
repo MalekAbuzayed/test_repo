@@ -63,7 +63,7 @@
                         <p class="filter-hint" style="margin-bottom: 14px;">
                             Request a complete solution including design, installation, and support.
                         </p>
-                        <a href="#" class="btn btn-primary filter-full-btn">Request Quote</a>
+                        <a href="{{ route('contact_us') }}" class="btn btn-primary filter-full-btn">Request Quote</a>
                     </div>
                 </aside>
 
@@ -116,16 +116,12 @@
                                             <dd>
                                                 @if ($hasFile)
                                                     <a class="file-link" href="{{ $fileUrl }}" target="_blank">
-                                                        {{ basename($filePath) }}
+                                                        View
                                                     </a>
                                                 @else
                                                     <span class="text-muted">Not available</span>
                                                 @endif
                                             </dd>
-                                        </div>
-                                        <div class="field">
-                                            <dt>Category</dt>
-                                            <dd>{{ optional($product->category)->title ?? '—' }}</dd>
                                         </div>
                                     </dl>
                                 </div>

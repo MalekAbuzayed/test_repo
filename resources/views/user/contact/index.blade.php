@@ -21,9 +21,9 @@
                             </div>
                             <h5>Our Address</h5>
                             <p>
-                                123 Business Street,<br>
-                                Tech District, Suite 456<br>
-                                Amman, Jordan 11953
+                                Wasfi Al-Tall St.<br>
+                                Al-Faysaliya Complex<br>
+                                3 floor, office 301
                             </p>
                         </div>
                     </div>
@@ -38,9 +38,9 @@
                             </div>
                             <h5>Email Us</h5>
                             <p>
-                                <a href="mailto:info@company.com">info@company.com</a><br>
-                                <a href="mailto:support@company.com">support@company.com</a><br>
-                                Available 24/7
+                                <a href="mailto:info@company.com"> info@energymagic.net</a><br>
+                                <a href="mailto:support@company.com"> info@energymagic.net</a><br>
+
                             </p>
                         </div>
                     </div>
@@ -55,9 +55,9 @@
                             </div>
                             <h5>Call Us</h5>
                             <p>
-                                <a href="tel:+96211234567">+962 1 123 4567</a><br>
-                                <a href="tel:+96279876543">+962 79 876 543</a><br>
-                                Mon-Fri: 9AM - 6PM
+                                <a href="tel:+96211234567">+ 06 4163824</a><br>
+                                <a href="tel:+96279876543">+962-796564266</a><br>
+                                Sun-Thu: 9AM - 6PM
                             </p>
                         </div>
                     </div>
@@ -94,8 +94,10 @@
                                 <div class="row g-3">
                                     <!-- Full Name -->
                                     <div class="col-md-6">
-                                        <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="fullName" name="fullName" placeholder="John Doe" required>
+                                        <label for="fullName" class="form-label">Full Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="fullName" name="fullName"
+                                            placeholder="John Doe" required>
                                         <div class="invalid-feedback">
                                             Please enter your full name.
                                         </div>
@@ -103,8 +105,10 @@
 
                                     <!-- Email Address -->
                                     <div class="col-md-6">
-                                        <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="john@example.com" required>
+                                        <label for="email" class="form-label">Email Address <span
+                                                class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="email" name="email"
+                                            placeholder="john@example.com" required>
                                         <div class="invalid-feedback">
                                             Please enter a valid email address.
                                         </div>
@@ -113,12 +117,14 @@
                                     <!-- Phone (Optional) -->
                                     <div class="col-md-6">
                                         <label for="phone" class="form-label">Phone Number</label>
-                                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="+962 79 123 4567">
+                                        <input type="tel" class="form-control" id="phone" name="phone"
+                                            placeholder="+962 79 123 4567">
                                     </div>
 
                                     <!-- Subject -->
                                     <div class="col-md-6">
-                                        <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
+                                        <label for="subject" class="form-label">Subject <span
+                                                class="text-danger">*</span></label>
                                         <select class="form-select" id="subject" name="subject" required>
                                             <option value="" selected disabled>Select a subject</option>
                                             <option value="general">General Inquiry</option>
@@ -135,8 +141,10 @@
 
                                     <!-- Message -->
                                     <div class="col-12">
-                                        <label for="message" class="form-label">Your Message <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" id="message" name="message" rows="6" placeholder="Tell us how we can help you..." required></textarea>
+                                        <label for="message" class="form-label">Your Message <span
+                                                class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="message" name="message" rows="6" placeholder="Tell us how we can help you..."
+                                            required></textarea>
                                         <div class="invalid-feedback">
                                             Please enter your message.
                                         </div>
@@ -149,7 +157,8 @@
                                                 <i class="bi bi-send me-2"></i>Send Message
                                             </span>
                                             <span id="btnLoading" class="d-none">
-                                                <span class="spinner-border spinner-border-sm-custom me-2" role="status" aria-hidden="true"></span>
+                                                <span class="spinner-border spinner-border-sm-custom me-2" role="status"
+                                                    aria-hidden="true"></span>
                                                 Sending...
                                             </span>
                                         </button>
@@ -173,11 +182,9 @@
             <div class="map-container">
                 <!-- Google Maps Embed - Replace with your actual location -->
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d54608.91515497911!2d35.86446983872712!3d31.956565844333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151ca1c83f171b89%3A0x9d4f185133e68bdd!2sAmman%2C%20Jordan!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s"
-                    allowfullscreen=""
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11058.673513265241!2d35.876419951560756!3d31.985239966858547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151ca1699539b3d7%3A0xe7476a0d707100bd!2sMagic%20Energy%20%26%20Power%20Systems%20MEPCO!5e0!3m2!1sen!2sjo!4v1771823738368!5m2!1sen!2sjo"
+                    width="800" height="600" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </section>
@@ -199,7 +206,6 @@
             </div>
         </div>
     </section>
-
 @endsection
 @section('contact_style')
     <style>
@@ -231,7 +237,7 @@
             right: -10%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             border-radius: 50%;
         }
 
@@ -256,7 +262,7 @@
             transition: all 0.3s ease;
             border: none;
             height: 100%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
         .contact-card:hover {
@@ -304,7 +310,7 @@
             background: var(--light-color);
             border-radius: 15px;
             padding: 2.5rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
             border: none;
         }
 
@@ -314,14 +320,16 @@
             margin-bottom: 0.5rem;
         }
 
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             border: 2px solid #e9ecef;
             border-radius: 10px;
             padding: 0.75rem 1rem;
             transition: all 0.3s ease;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.25rem rgba(197, 44, 38, 0.15);
         }
@@ -357,7 +365,7 @@
         .map-container {
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             height: 400px;
         }
 
@@ -454,7 +462,10 @@
                         successAlert.classList.remove('d-none');
 
                         // Scroll to success message
-                        successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        successAlert.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
 
                         // Reset form
                         form.reset();

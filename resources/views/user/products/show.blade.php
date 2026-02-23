@@ -47,11 +47,11 @@
 
                     <dl class="product-fields">
                         <div class="field">
-                            <dt>File</dt>
+                            <dt>Full Specifications</dt>
                             <dd>
                                 @if ($hasFile)
                                     <a class="file-link" href="{{ $fileUrl }}" target="_blank">
-                                        {{ basename($filePath) }}
+                                        View File
                                     </a>
                                 @else
                                     <span class="text-muted">Not available</span>
@@ -102,16 +102,6 @@
             </section>
 
             <section class="product-pdf reveal" aria-label="Product PDF">
-                <div class="product-pdf-head">
-                    <h3>Product File (PDF)</h3>
-                    <p class="product-pdf-sub">
-                        @if ($hasFile)
-                            {{ basename($filePath) }}
-                        @else
-                            No file available.
-                        @endif
-                    </p>
-                </div>
                 <div class="product-pdf-frame">
                     @if ($isPdf)
                         <iframe src="{{ $fileUrl }}" title="Product PDF"></iframe>

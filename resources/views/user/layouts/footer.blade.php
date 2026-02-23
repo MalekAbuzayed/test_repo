@@ -3,7 +3,7 @@
 
             <div class="footer-col">
                 <div class="footer-brand">
-                    <span class="brand-icon">⚡</span> Energy Magic
+                    Energy Magic
                 </div>
                 <p class="footer-text">Clean Energy, Smart Savings.</p>
                 <p class="footer-desc">
@@ -40,9 +40,10 @@
 
             <div class="footer-col">
                 <h4>Contact Info</h4>
-                <p>📞 (555) 123-4567</p>
-                <p>✉️ info@energymagic.com</p>
-                <p>📍 123 Solar Street<br />San Francisco, CA<br />94102</p>
+                <p> 📞 06 4163824</p>
+                <p> +962-796564266 </p>
+                <p>✉️ info@energymagic.net</p>
+                <p>Wasfi Al-Tall St.<br />Al-Faysaliya Complex<br />3 floor, office 301</p>
             </div>
         </div>
 
