@@ -2,36 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
-
-    // ===================================================================================================================
-    // ============================================= Basic Section =======================================================
-    // ===================================================================================================================
-    protected $table = 'products';
-
     protected $fillable = [
-        'name',
-        'type',
         'category_id',
-        'subcategory',
+        'subcategory_id',
         'title',
         'description',
-        'image',
-        'file',
         'status',
     ];
 
-    // ===================================================================================================================
-    // ============================================= Accessors Section ===================================================
-    // ===================================================================================================================
-    // status
     public function getStatusAttribute($value)
     {
         if ($value == 1) {
@@ -41,27 +25,33 @@ class Product extends Model
         }
     }
 
-    // type
-    public function getTypeAttribute($value)
-    {
-        $types = [
-            'batteries' => 'Batteries',
-            'hybrid' => 'Hybrid',
-            'onGrid' => 'OnGrid',
-            'pv-module' => 'PV-Module',
-            'others' => 'Others',
-        ];
-
-        return $types[$value] ?? $value;
-    }
-
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function specifications()
+    public function subcategory(): BelongsTo
     {
-        return $this->hasMany(Specification::class);
+        return $this->belongsTo(Subcategory::class);
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(ProductFile::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductFile::class)->where('type', 'image');
+    }
+
+    public function downloads(): HasMany
+    {
+        return $this->hasMany(ProductFile::class)->where('type', '!=', 'image');
+    }
+
+    public function specValues(): HasMany
+    {
+        return $this->hasMany(ProductSpecValue::class);
     }
 }

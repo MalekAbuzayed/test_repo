@@ -3,15 +3,18 @@
 <!-- ============================================================== -->
 <script src="{{ asset('public/style_files/backend/src/assets/libs/jquery/dist/jquery.min.js') }}"></script>
 <!-- Bootstrap tether Core JavaScript -->
-<script src="{{ asset('public/style_files/backend/src/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('public/style_files/backend/src/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}">
+</script>
 <!-- apps -->
 <script src="{{ asset('public/style_files/backend/dist/js/app.min.js') }}"></script>
 <script src="{{ asset('public/style_files/backend/dist/js/app.init.horizontal.js') }}"></script>
 <script src="{{ asset('public/style_files/backend/dist/js/app-style-switcher.horizontal.js') }}"></script>
 <!-- slimscrollbar scrollbar JavaScript -->
-<script src="{{ asset('public/style_files/backend/src/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js') }}">
+<script
+    src="{{ asset('public/style_files/backend/src/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js') }}">
 </script>
-<script src="{{ asset('public/style_files/backend/src/assets/libs/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
+<script src="{{ asset('public/style_files/backend/src/assets/libs/jquery-sparkline/jquery.sparkline.min.js') }}">
+</script>
 <!--Wave Effects -->
 <script src="{{ asset('public/style_files/backend/dist/js/waves.js') }}"></script>
 <!--Menu sidebar -->
@@ -29,7 +32,8 @@
 @endif --}}
 
 <!-- start - This is for export functionality only -->
-<script src="{{ asset('public/style_files/backend/src/assets/libs/datatables/media/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('public/style_files/backend/src/assets/libs/datatables/media/js/jquery.dataTables.min.js') }}">
+</script>
 <script src="{{ asset('public/style_files/backend/dist/js/pages/datatable/custom-datatable.js') }}"></script>
 {{-- <script src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script> --}}
 {{-- <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.flash.min.js"></script> --}}
@@ -39,8 +43,10 @@
 {{-- <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script> --}}
 {{-- <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script> --}}
 <script src="{{ asset('public/style_files/backend/dist/js/pages/datatable/datatable-advanced.init.js') }}"></script>
-<script src="{{ asset('public/style_files/backend/src/assets/extra-libs/tiny-editable/mindmup-editabletable.js') }}"></script>
-<script src="{{ asset('public/style_files/backend/src/assets/extra-libs/tiny-editable/numeric-input-example.js') }}"></script>
+<script src="{{ asset('public/style_files/backend/src/assets/extra-libs/tiny-editable/mindmup-editabletable.js') }}">
+</script>
+<script src="{{ asset('public/style_files/backend/src/assets/extra-libs/tiny-editable/numeric-input-example.js') }}">
+</script>
 {{-- <script>
         $('#mainTable').editableTableWidget().numericInputExample().find('td:first').focus();
         $('#editable-datatable').editableTableWidget().numericInputExample().find('td:first').focus();
@@ -64,7 +70,8 @@
 
 
 {{-- Sweet Alert --}}
-<script src="{{ asset('public/style_files/backend/src/assets/libs/sweetalert2/dist/sweetalert2.all.min.js') }}"></script>
+<script src="{{ asset('public/style_files/backend/src/assets/libs/sweetalert2/dist/sweetalert2.all.min.js') }}">
+</script>
 <script src="{{ asset('public/style_files/backend/src/assets/extra-libs/sweetalert2/sweet-alert.init.js') }}"></script>
 <script src="{{ asset('public/style_files/backend/dist/js/custom.js') }}"></script>
 <script src="{{ asset('public/style_files/shared/js/custom.js') }}"></script>
@@ -107,7 +114,7 @@
 
 {{-- Custom Statistics --}}
 {{-- <script src="{{ asset('style_files/backend/dist/js/pages/dashboards/custom_statistics.js') }}"></script> --}}
-
+@stack('scripts')
 @yield('extra_js')
 </body>
 

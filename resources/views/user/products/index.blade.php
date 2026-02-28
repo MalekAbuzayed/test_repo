@@ -32,11 +32,6 @@
 
                         <div class="filter-group">
                             <label class="filter-item">
-                                <input class="filter-check" type="checkbox" value="panels" checked />
-                                <span>Panels</span>
-                            </label>
-
-                            <label class="filter-item">
                                 <input class="filter-check" type="checkbox" value="inverters" checked />
                                 <span>Inverters</span>
                             </label>
@@ -45,25 +40,12 @@
                                 <input class="filter-check" type="checkbox" value="batteries" checked />
                                 <span>Batteries</span>
                             </label>
-
-                            <label class="filter-item">
-                                <input class="filter-check" type="checkbox" value="other" checked />
-                                <span>Other</span>
-                            </label>
                         </div>
 
                         <div class="filter-actions">
                             <button type="button" class="btn btn-outline">Clear</button>
                             <button type="button" class="btn btn-primary">Select All</button>
                         </div>
-                    </div>
-
-                    <div class="filter-card filter-card-soft">
-                        <h3 class="filter-title">Need a full system?</h3>
-                        <p class="filter-hint" style="margin-bottom: 14px;">
-                            Request a complete solution including design, installation, and support.
-                        </p>
-                        <a href="{{ route('contact_us') }}" class="btn btn-primary filter-full-btn">Request Quote</a>
                     </div>
                 </aside>
 

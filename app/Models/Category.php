@@ -3,19 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
+    protected $fillable = ['name', 'status'];
 
-    protected $guarded = [];
-
-    public function products()
+    public function subcategories(): HasMany
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Subcategory::class);
     }
 
-    public function specification()
+    public function products(): HasMany
     {
-        return $this->hasMany(Specification::class);
+        return $this->hasMany(Product::class);
     }
 }

@@ -21,6 +21,7 @@ use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\Backend\Admin\OurVisionBackendController;
 use App\Http\Controllers\Backend\Admin\OurGoalBackendController;
 use App\Http\Controllers\Backend\Admin\TeamMemberBackendController;
+use App\Http\Controllers\Backend\Admin\AdminSpecController;
 
 
 Route::get('/login', [AuthBackendController::class, 'showLoginForm'])->name('login');
@@ -108,18 +109,18 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
         });
 
         // team_members :
-Route::group(['prefix' => 'team_members'], function () {
-    Route::get('/index', [TeamMemberBackendController::class, 'index'])->name('team_members-index');
-    Route::get('/create', [TeamMemberBackendController::class, 'create'])->name('team_members-create');
-    Route::post('/store', [TeamMemberBackendController::class, 'store'])->name('team_members-store');
-    Route::get('show/{id}', [TeamMemberBackendController::class, 'show'])->name('team_members-show');
-    Route::get('edit/{id}', [TeamMemberBackendController::class, 'edit'])->name('team_members-edit');
-    Route::post('update/{id}', [TeamMemberBackendController::class, 'update'])->name('team_members-update');
-    Route::get('softDelete/{id}', [TeamMemberBackendController::class, 'softDelete'])->name('team_members-softDelete');
-    Route::get('/showSoftDelete', [TeamMemberBackendController::class, 'showSoftDelete'])->name('team_members-showSoftDelete');
-    Route::get('softDeleteRestore/{id}', [TeamMemberBackendController::class, 'softDeleteRestore'])->name('team_members-softDeleteRestore');
-    Route::get('/activeInactiveSingle/{id}', [TeamMemberBackendController::class, 'activeInactiveSingle'])->name('team_members-activeInactiveSingle');
-});
+        Route::group(['prefix' => 'team_members'], function () {
+            Route::get('/index', [TeamMemberBackendController::class, 'index'])->name('team_members-index');
+            Route::get('/create', [TeamMemberBackendController::class, 'create'])->name('team_members-create');
+            Route::post('/store', [TeamMemberBackendController::class, 'store'])->name('team_members-store');
+            Route::get('show/{id}', [TeamMemberBackendController::class, 'show'])->name('team_members-show');
+            Route::get('edit/{id}', [TeamMemberBackendController::class, 'edit'])->name('team_members-edit');
+            Route::post('update/{id}', [TeamMemberBackendController::class, 'update'])->name('team_members-update');
+            Route::get('softDelete/{id}', [TeamMemberBackendController::class, 'softDelete'])->name('team_members-softDelete');
+            Route::get('/showSoftDelete', [TeamMemberBackendController::class, 'showSoftDelete'])->name('team_members-showSoftDelete');
+            Route::get('softDeleteRestore/{id}', [TeamMemberBackendController::class, 'softDeleteRestore'])->name('team_members-softDeleteRestore');
+            Route::get('/activeInactiveSingle/{id}', [TeamMemberBackendController::class, 'activeInactiveSingle'])->name('team_members-activeInactiveSingle');
+        });
 
         // contact_us :
         // Created By Ayhm Rahhal
@@ -256,3 +257,5 @@ Route::get('/faq', [FAQController::class, 'index'])->name('faq');
 Route::get('/products', [ProductController::class, 'index'])->name('products');
 Route::get('/product', [ProductController::class, 'show'])->name('product');
 Route::get('/product/file/{id}', [ProductController::class, 'file'])->name('product.file');
+Route::get('/admin/spec-template/{subcategory}', [AdminSpecController::class, 'template'])
+    ->name('admin.spec-template');

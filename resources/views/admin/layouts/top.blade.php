@@ -43,7 +43,7 @@
     <!-- Custom CSS -->
     {{-- <link href="{{ asset('style_files/backend/dist/css/custom.css') }}" rel="stylesheet"> --}}
     <link rel="stylesheet" href="{{ asset('public/style_files/backend/dist/css/custom.css') }}">
-
+    @stack('styles')
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Backend\Admin;
 use App\Models\Product;
 use App\Models\Specification;
 use App\Models\Category;
+use App\Models\ProductFile;
+use App\Models\ProductSpecValue;
+use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use App\Models\SupportTicket;
 use Illuminate\Routing\Route;
@@ -66,8 +69,9 @@ class ProductBackendController extends Controller
             // get the next autoincrement id :
             $statement = DB::select("SHOW TABLE STATUS LIKE 'products'");
             $nextId = $statement[0]->Auto_increment;
+            $subcategories = Subcategory::orderBy('name')->get();
 
-            return view('admin.products.create', compact('nextId'));
+            return view('admin.products.create', compact(['nextId', 'subcategories']));
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
             $check_old_errors = new SupportTicket;
@@ -101,95 +105,127 @@ class ProductBackendController extends Controller
     public function store(StoreProductFormRequest $request, Route $route)
     {
         try {
-            $typeValue = $request->type;
-            $typeToCategory = [
-                'batteries' => 'Batteries',
-                'hybrid' => 'Hybrid Inverter',
-                'onGrid' => 'On Grid Inverter',
-                'pv-module' => 'PV-Module',
-                'other' => 'Other',
-            ];
-            $categoryTitle = $typeToCategory[$typeValue] ?? $typeValue;
+            $request->validate([
+                'title' => ['required', 'string', 'max:255'],
+                'description' => ['nullable', 'string'],
+                'status' => ['nullable'], // adjust to your enum (1/2 etc)
+                'subcategory_id' => ['required', 'exists:subcategories,id'],
 
-            $categoryId = $request->input('category_id');
-            if (!$categoryId && $categoryTitle) {
-                $category = Category::firstOrCreate(
-                    ['title' => $categoryTitle],
-                    ['status' => '1']
-                );
-                $categoryId = $category->id;
-            }
+                // images
+                'images' => ['nullable', 'array'],
+                'images.*' => ['file', 'mimes:jpg,jpeg,png,webp,gif', 'max:2048'],
 
-            $subcategory = $request->input('subcategory');
-            if (!$subcategory) {
-                $subcategory = $categoryTitle ?: ($typeValue ?: 'General');
-            }
+                // typed files
+                'files' => ['nullable', 'array'],
+                'files.*' => ['nullable', 'array'],
+                'files.*.*' => ['file', 'max:10240'], // 10MB example; add mimes if you want
 
-            // Prepare Data :
-            $created_data = [
-                'name' => $request->name,
-                'type' => $request->type,
-                'category_id' => $categoryId,
-                'subcategory' => $subcategory,
-                'title' => $request->title,
-                'description' => $request->description,
-                'status' => $request->status,
-            ];
+                // specs
+                'spec_values' => ['nullable', 'array'],
+            ]);
 
-            //request category_id,product_id and specs to store them in the specs table
-            // we need to find a way to store the specifications that are rendered depending on the selected type / category
+            $subcategory = Subcategory::with('category')->findOrFail($request->subcategory_id);
 
-            // Upload Image Section :
-            if (isset($request->image)) {
-                $orginal_image = $request->file('image');
-                $upload_location = 'storage/images/products/';
-                $last_image = $this->saveFile($orginal_image, $upload_location);
-                $created_data['image'] = $last_image;
-            }
+            DB::transaction(function () use ($request, $subcategory) {
 
-            // Upload File Section :
-            if (isset($request->file)) {
-                $orginal_file = $request->file('file');
-                $upload_location = 'storage/files/products/';
-                $last_file = $this->savePdfFile($orginal_file, $upload_location);
-                $created_data['file'] = $last_file;
-            }
+                // 1) Create product
+                $product = Product::create([
+                    'category_id' => $subcategory->category_id,
+                    'subcategory_id' => $subcategory->id,
+                    'title' => $request->title,
+                    'description' => $request->description,
+                    'status' => $request->status,
+                ]);
 
-            // Store in DB :
-            DB::transaction(function () use ($created_data, $request) {
-                $product = Product::create($created_data);
+                // 2) Save images
+                $images = $request->file('images', []);
+                $imageSort = 1;
 
-                // Specifications
-                $specTitles = $request->input('spec_titles', []);
+                foreach ($images as $img) {
+                    $path = $img->store("products/{$product->id}/images", 'public');
+
+                    ProductFile::create([
+                        'product_id' => $product->id,
+                        'type' => 'image',
+                        'path' => $path,
+                        'title' => $img->getClientOriginalName(),
+                        'mime_type' => $img->getMimeType(),
+                        'size_bytes' => $img->getSize(),
+                        'sort_order' => $imageSort,
+                        'is_primary' => ($imageSort === 1), // first image is cover by default
+                        'status' => 'active',
+                    ]);
+
+                    $imageSort++;
+                }
+
+                // 3) Save other files grouped by type
+                // Expected input: files[datasheet][], files[manual][], ...
+                $typedFiles = $request->file('files', []);
+
+                $allowedTypes = [
+                    'datasheet',
+                    'certificate',
+                    'manual',
+                    'guide',
+                    'install_video',
+                    'ond',
+                    'other',
+                ];
+
+                foreach ($typedFiles as $type => $filesArr) {
+                    if (!in_array($type, $allowedTypes, true)) {
+                        continue; // ignore unknown keys
+                    }
+
+                    if (!is_array($filesArr)) continue;
+
+                    $sort = 1;
+                    foreach ($filesArr as $file) {
+                        if (!$file) continue;
+
+                        $path = $file->store("products/{$product->id}/files/{$type}", 'public');
+
+                        ProductFile::create([
+                            'product_id' => $product->id,
+                            'type' => $type,
+                            'path' => $path,
+                            'title' => $file->getClientOriginalName(),
+                            'mime_type' => $file->getMimeType(),
+                            'size_bytes' => $file->getSize(),
+                            'sort_order' => $sort,
+                            'is_primary' => false,
+                            'status' => 'active',
+                        ]);
+
+                        $sort++;
+                    }
+                }
+
+                // 4) Save specs (field_id => value_text)
                 $specValues = $request->input('spec_values', []);
 
-                $categoryId = $product->category_id ?? $categoryId ?? 0;
+                foreach ($specValues as $fieldId => $valueText) {
+                    $valueText = trim((string)$valueText);
 
-                $specRows = [];
-                foreach ($specTitles as $index => $title) {
-                    $title = trim((string) $title);
-                    $value = trim((string) ($specValues[$index] ?? ''));
-
-                    if ($title === '' || $value === '') {
+                    if ($valueText === '') {
                         continue;
                     }
 
-                    $specRows[] = [
-                        'category_id' => $categoryId,
-                        'product_id' => $product->id,
-                        'spec_title' => $title,
-                        'spec_desc' => $value,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }
-
-                if (!empty($specRows)) {
-                    Specification::insert($specRows);
+                    ProductSpecValue::updateOrCreate(
+                        [
+                            'product_id' => $product->id,
+                            'spec_field_id' => (int)$fieldId,
+                        ],
+                        [
+                            'value_text' => $valueText,
+                        ]
+                    );
                 }
             });
 
-            return redirect()->route('super_admin.products-index')->with('success', 'Record Has Been Added Successfully');
+            return redirect()->route('super_admin.products-index')
+                ->with('success', 'Product created successfully.');
         } catch (\Throwable $th) {
             $function_name = $route->getActionName();
             $check_old_errors = new SupportTicket;

@@ -21,6 +21,9 @@ class DatabaseSeeder extends Seeder
             TermsSeeder::class,
             SliderSeeder::class,
             PrivacySeeder::class,
+            CategorySeeder::class,
+            SubcategorySeeder::class,
+            SpecTemplateSeeder::class,
         ]);
     }
 }
