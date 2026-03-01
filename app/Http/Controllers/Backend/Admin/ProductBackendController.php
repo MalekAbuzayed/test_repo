@@ -104,25 +104,9 @@ class ProductBackendController extends Controller
     // ========================================================================
     public function store(StoreProductFormRequest $request, Route $route)
     {
+
         try {
-            $request->validate([
-                'title' => ['required', 'string', 'max:255'],
-                'description' => ['nullable', 'string'],
-                'status' => ['nullable'], // adjust to your enum (1/2 etc)
-                'subcategory_id' => ['required', 'exists:subcategories,id'],
 
-                // images
-                'images' => ['nullable', 'array'],
-                'images.*' => ['file', 'mimes:jpg,jpeg,png,webp,gif', 'max:2048'],
-
-                // typed files
-                'files' => ['nullable', 'array'],
-                'files.*' => ['nullable', 'array'],
-                'files.*.*' => ['file', 'max:10240'], // 10MB example; add mimes if you want
-
-                // specs
-                'spec_values' => ['nullable', 'array'],
-            ]);
 
             $subcategory = Subcategory::with('category')->findOrFail($request->subcategory_id);
 
