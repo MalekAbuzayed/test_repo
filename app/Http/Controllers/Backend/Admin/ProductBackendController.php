@@ -30,30 +30,35 @@ class ProductBackendController extends Controller
     public function index(Request $request, Route $route)
     {
         try {
-            $products = Product::orderBy('created_at', 'desc')->get();
+            $products = Product::query()
+                ->with([
+                    'category:id,name',
+                    'subcategory:id,name',
+                    // load only primary image (or first image) for table thumbnail
+                    'files' => fn($q) => $q->where('type', 'image')->orderByDesc('is_primary')->orderBy('sort_order'),
+                ])
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             return view('admin.products.index', compact('products'));
         } catch (\Throwable $th) {
+            // ...keep your support ticket logic
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket;
-            $check_old_errors = $check_old_errors->select('*')->where([
+            $check_old_errors = (new SupportTicket)->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
                 'function_name' => $function_name,
                 'error_line' => $th->getLine(),
             ])->get();
 
-            if ($check_old_errors->count() == 0) {
-                $new_error_ticket = SupportTicket::create([
+            $end_error_ticket = $check_old_errors->count() == 0
+                ? SupportTicket::create([
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
                     'error_line' => $th->getLine(),
-                ]);
-                $end_error_ticket = $new_error_ticket;
-            } else {
-                $end_error_ticket = $check_old_errors->first();
-            }
+                ])
+                : $check_old_errors->first();
 
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
@@ -243,33 +248,36 @@ class ProductBackendController extends Controller
     public function show($id, Route $route)
     {
         try {
-            $product = Product::find($id);
+            $product = Product::with([
+                'category:id,name',
+                'subcategory:id,name',
+                'files' => fn($q) => $q->orderByDesc('is_primary')->orderBy('sort_order'),
+                'specValues:id,product_id,spec_field_id,value_text',
+            ])->find($id);
+
             if ($product) {
                 return view('admin.products.show', compact('product'));
-            } else {
-                return redirect()->route('super_admin.products-index')->with('danger', 'Record Not Found');
             }
+
+            return redirect()->route('super_admin.products-index')->with('danger', 'Record Not Found');
         } catch (\Throwable $th) {
+            // ...support tickets
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket;
-            $check_old_errors = $check_old_errors->select('*')->where([
+            $check_old_errors = (new SupportTicket)->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
                 'function_name' => $function_name,
                 'error_line' => $th->getLine(),
             ])->get();
 
-            if ($check_old_errors->count() == 0) {
-                $new_error_ticket = SupportTicket::create([
+            $end_error_ticket = $check_old_errors->count() == 0
+                ? SupportTicket::create([
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
                     'error_line' => $th->getLine(),
-                ]);
-                $end_error_ticket = $new_error_ticket;
-            } else {
-                $end_error_ticket = $check_old_errors->first();
-            }
+                ])
+                : $check_old_errors->first();
 
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
@@ -282,33 +290,39 @@ class ProductBackendController extends Controller
     public function edit($id, Route $route)
     {
         try {
-            $product = Product::find($id);
-            if ($product) {
-                return view('admin.products.edit', compact('product'));
-            } else {
+            $product = Product::with([
+                'files' => fn($q) => $q->orderByDesc('is_primary')->orderBy('sort_order'),
+                'specValues:id,product_id,spec_field_id,value_text',
+                'subcategory:id,name',
+                'category:id,name',
+            ])->find($id);
+
+            if (!$product) {
                 return redirect()->route('super_admin.products-index')->with('danger', 'This data is not in the records');
             }
+
+            $subcategories = Subcategory::orderBy('name')->get();
+            $existingSpecValues = $product->specValues->pluck('value_text', 'spec_field_id');
+
+            return view('admin.products.edit', compact('product', 'subcategories', 'existingSpecValues'));
         } catch (\Throwable $th) {
+            // ...support tickets (keep your logic)
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket;
-            $check_old_errors = $check_old_errors->select('*')->where([
+            $check_old_errors = (new SupportTicket)->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
                 'function_name' => $function_name,
                 'error_line' => $th->getLine(),
             ])->get();
 
-            if ($check_old_errors->count() == 0) {
-                $new_error_ticket = SupportTicket::create([
+            $end_error_ticket = $check_old_errors->count() == 0
+                ? SupportTicket::create([
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
                     'error_line' => $th->getLine(),
-                ]);
-                $end_error_ticket = $new_error_ticket;
-            } else {
-                $end_error_ticket = $check_old_errors->first();
-            }
+                ])
+                : $check_old_errors->first();
 
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
@@ -322,62 +336,117 @@ class ProductBackendController extends Controller
     {
         try {
             $product = Product::find($id);
-            if ($product) {
-                // Prepare Data :
-                $updated_data = [
-                    'name' => $request->name,
-                    'type' => $request->type,
+            if (!$product) {
+                return redirect()->route('super_admin.products-index')->with('danger', 'Record Not Found');
+            }
+
+            $subcategory = Subcategory::findOrFail($request->subcategory_id);
+
+            DB::transaction(function () use ($request, $product, $subcategory) {
+
+                // 1) Update product base data
+                $product->update([
+                    'category_id' => $subcategory->category_id,
+                    'subcategory_id' => $subcategory->id,
                     'title' => $request->title,
                     'description' => $request->description,
                     'status' => $request->status,
-                ];
+                ]);
 
-                // Upload Image Section :
-                if (isset($request->image)) {
-                    $orginal_image = $request->file('image');
-                    $upload_location = 'storage/images/products/';
-                    $last_image = $this->saveFile($orginal_image, $upload_location);
-                    $updated_data['image'] = $last_image;
+                // 2) Append NEW images (don’t delete old unless user deletes explicitly)
+                $images = $request->file('images', []);
+                $imageSort = (int) (ProductFile::where('product_id', $product->id)
+                    ->where('type', 'image')
+                    ->max('sort_order') ?? 0);
+
+                foreach ($images as $img) {
+                    $imageSort++;
+                    $path = $img->store("products/{$product->id}/images", 'public');
+
+                    ProductFile::create([
+                        'product_id' => $product->id,
+                        'type' => 'image',
+                        'path' => $path,
+                        'title' => $img->getClientOriginalName(),
+                        'mime_type' => $img->getMimeType(),
+                        'size_bytes' => $img->getSize(),
+                        'sort_order' => $imageSort,
+                        'is_primary' => false,
+                        'status' => 'active',
+                    ]);
                 }
 
-                // Upload File Section :
-                if (isset($request->file)) {
-                    $orginal_file = $request->file('file');
-                    $upload_location = 'storage/files/products/';
-                    $last_file = $this->savePdfFile($orginal_file, $upload_location);
-                    $updated_data['file'] = $last_file;
+                // 3) Append NEW typed files
+                $allowedTypes = ['datasheet', 'certificate', 'manual', 'guide', 'install_video', 'ond', 'other'];
+                $typedFiles = $request->file('files', []);
+
+                foreach ($typedFiles as $type => $filesArr) {
+                    if (!in_array($type, $allowedTypes, true)) continue;
+                    if (!is_array($filesArr)) continue;
+
+                    $sort = (int) (ProductFile::where('product_id', $product->id)
+                        ->where('type', $type)
+                        ->max('sort_order') ?? 0);
+
+                    foreach ($filesArr as $file) {
+                        if (!$file) continue;
+                        $sort++;
+
+                        $path = $file->store("products/{$product->id}/files/{$type}", 'public');
+
+                        ProductFile::create([
+                            'product_id' => $product->id,
+                            'type' => $type,
+                            'path' => $path,
+                            'title' => $file->getClientOriginalName(),
+                            'mime_type' => $file->getMimeType(),
+                            'size_bytes' => $file->getSize(),
+                            'sort_order' => $sort,
+                            'is_primary' => false,
+                            'status' => 'active',
+                        ]);
+                    }
                 }
 
-                // Update in DB :
-                DB::transaction(function () use ($updated_data, $product) {
-                    $product->update($updated_data);
-                });
+                // 4) Specs: upsert + delete empty
+                $specValues = $request->input('spec_values', []);
 
-                return redirect()->route('super_admin.products-index')->with('success', 'Record Has Been Updated');
-            } else {
-                return redirect()->route('super_admin.products-index')->with('danger', 'Record Not Found');
-            }
+                foreach ($specValues as $fieldId => $valueText) {
+                    $valueText = trim((string)$valueText);
+
+                    if ($valueText === '') {
+                        ProductSpecValue::where('product_id', $product->id)
+                            ->where('spec_field_id', (int)$fieldId)
+                            ->delete();
+                        continue;
+                    }
+
+                    ProductSpecValue::updateOrCreate(
+                        ['product_id' => $product->id, 'spec_field_id' => (int)$fieldId],
+                        ['value_text' => $valueText]
+                    );
+                }
+            });
+
+            return redirect()->route('super_admin.products-index')->with('success', 'Record Has Been Updated');
         } catch (\Throwable $th) {
+            // ...support tickets (keep your logic)
             $function_name = $route->getActionName();
-            $check_old_errors = new SupportTicket;
-            $check_old_errors = $check_old_errors->select('*')->where([
+            $check_old_errors = (new SupportTicket)->where([
                 'error_location' => $th->getFile(),
                 'error_description' => $th->getMessage(),
                 'function_name' => $function_name,
                 'error_line' => $th->getLine(),
             ])->get();
 
-            if ($check_old_errors->count() == 0) {
-                $new_error_ticket = SupportTicket::create([
+            $end_error_ticket = $check_old_errors->count() == 0
+                ? SupportTicket::create([
                     'error_location' => $th->getFile(),
                     'error_description' => $th->getMessage(),
                     'function_name' => $function_name,
                     'error_line' => $th->getLine(),
-                ]);
-                $end_error_ticket = $new_error_ticket;
-            } else {
-                $end_error_ticket = $check_old_errors->first();
-            }
+                ])
+                : $check_old_errors->first();
 
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }

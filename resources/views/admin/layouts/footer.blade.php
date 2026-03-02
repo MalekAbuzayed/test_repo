@@ -3,7 +3,7 @@
 <!-- ============================================================== -->
 <footer class="footer">
     &copy; <span id="copy-year">2025</span> Copyright | All rights reserved for
-    <a class="text-primary" href="https://bluerayws.com/" target="_blank">Magic Energy</a>.
+    <a class="text-primary" href="" target="_blank">Magic Energy</a>.
 </footer>
 <!-- ============================================================== -->
 <!-- End footer -->

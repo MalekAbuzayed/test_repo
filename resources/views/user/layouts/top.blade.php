@@ -18,7 +18,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     @yield('style_faq')
-    <link rel="stylesheet" href="{{ asset('public/style_files/user/layout_style.css') }}">
+    <link rel="stylesheet" href="{{ asset('/style_files/user/layout_style.css') }}">
     @yield('styles')
     @yield('contact_style')
 </head>

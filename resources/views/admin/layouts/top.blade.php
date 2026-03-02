@@ -16,33 +16,31 @@
 
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16"
-        href="{{ asset('public/style_files/backend/src/assets/images/favicon.png') }}">
+        href="{{ asset('style_files/backend/src/assets/images/favicon.png') }}">
 
     {{-- Data Table --}}
-    <link
-        href="{{ asset('public/style_files/backend/src/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.css') }}"
+    <link href="{{ asset('style_files/backend/src/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.css') }}"
         rel="stylesheet">
 
     {{-- Sweet Alert --}}
-    <link href="{{ asset('public/style_files/backend/src/assets/libs/sweetalert2/dist/sweetalert2.min.css') }}"
+    <link href="{{ asset('style_files/backend/src/assets/libs/sweetalert2/dist/sweetalert2.min.css') }}"
         rel="stylesheet">
 
     <!-- Custom CSS -->
     @if (\Request::route()->getName() == 'super_admin.dashboard')
-        <link rel="stylesheet"
-            href="{{ asset('public/style_files/backend/src/assets/libs/apexcharts/dist/apexcharts.css') }}">
+        <link rel="stylesheet" href="{{ asset('style_files/backend/src/assets/libs/apexcharts/dist/apexcharts.css') }}">
     @endif
 
     {{-- Multiple Select  --}}
     <link rel="stylesheet" type="text/css"
-        href="{{ asset('public/style_files/backend/src/assets/libs/select2/dist/css/select2.min.css') }}">
+        href="{{ asset('style_files/backend/src/assets/libs/select2/dist/css/select2.min.css') }}">
 
     {{-- Main Style --}}
-    <link href="{{ asset('public/style_files/backend/dist/css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('style_files/backend/dist/css/style.css') }}" rel="stylesheet">
 
     <!-- Custom CSS -->
     {{-- <link href="{{ asset('style_files/backend/dist/css/custom.css') }}" rel="stylesheet"> --}}
-    <link rel="stylesheet" href="{{ asset('public/style_files/backend/dist/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('style_files/backend/dist/css/custom.css') }}">
     @stack('styles')
 
 

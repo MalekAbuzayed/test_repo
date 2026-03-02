@@ -73,9 +73,8 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Image</th>
-                                        <th>Name</th>
-                                        <th>Type</th>
                                         <th>Title</th>
+                                        <th>Type</th>
                                         <th>Status</th>
                                         <th>Date/Time</th>
                                         <th>Control</th>
@@ -91,31 +90,30 @@
 
                                                 {{-- Image --}}
                                                 <td>
-                                                    <a
-                                                        href="{{ route('super_admin.products-show', isset($product->id) ? $product->id : -1) }}">
-                                                        @if (isset($product) && $product->image && file_exists($product->image))
-                                                            <img src="{{ asset($product->image) }}" alt="Image"
+                                                    @php
+                                                        $img = $product->files->first(); // due to ordering (primary first)
+                                                    @endphp
+
+                                                    <a href="{{ route('super_admin.products-show', $product->id) }}">
+                                                        @if ($img)
+                                                            <img src="{{ asset('storage/' . $img->path) }}" alt="Image"
                                                                 height="80" width="80"
                                                                 class="img-thumbnail image-preview">
                                                         @else
-                                                            <img src="{{ asset('style_files/shared/images_default/default.jpg') }}"
-                                                                alt="Image" height="80" width="80"
-                                                                class="img-thumbnail image-preview">
+                                                            no image
                                                         @endif
                                                     </a>
                                                 </td>
 
                                                 {{-- Name --}}
-                                                <td><a
-                                                        href="{{ route('super_admin.products-show', isset($product->id) ? $product->id : -1) }}">{{ isset($product->name) ? $product->name : '----' }}</a>
+                                                <td>{{ isset($product->title) ? Str::limit($product->title, 30) : '----' }}
                                                 </td>
 
                                                 {{-- Type --}}
-                                                <td>{{ isset($product->type) ? $product->type : '----' }}</td>
+                                                <td>{{ $product->subcategory->name ?? '----' }}</td>
 
                                                 {{-- Title --}}
-                                                <td>{{ isset($product->title) ? Str::limit($product->title, 30) : '----' }}
-                                                </td>
+
 
                                                 {{-- Status --}}
                                                 <td>

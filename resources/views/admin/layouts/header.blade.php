@@ -8,7 +8,7 @@
             <a class="navbar-brand" href="{{ route('super_admin.dashboard') }}">
                 <b class="logo-icon">
                     <!-- Light Logo icon -->
-                    <img src="{{ asset('public/style_files/images/logo.png') }}" alt="Magic Energy" class=" logo-image"
+                    <img src="{{ asset('style_files/images/logo.png') }}" alt="Magic Energy" class=" logo-image"
                         width="auto" height="60" />
                 </b>
             </a>
@@ -34,7 +34,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle waves-effect waves-dark d-flex align-items-center" href="#"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="{{ asset(auth()->guard('super_admin')->user()->personal_image && file_exists(auth()->guard('super_admin')->user()->personal_image) ? auth()->guard('user')->user()->personal_image : 'public/style_files/images/logo.png') }}"
+                        <img src="{{ asset(auth()->guard('super_admin')->user()->personal_image && file_exists(auth()->guard('super_admin')->user()->personal_image) ? auth()->guard('user')->user()->personal_image : 'style_files/images/logo.png') }}"
                             alt="user" width="30" height="30" class="profile-pic rounded-circle">
                         <span class="ms-2">
                             <strong>{{ auth()->guard('super_admin')->user()->name ?? 'Undefined' }}</strong>
@@ -43,7 +43,7 @@
                     <div class="dropdown-menu dropdown-menu-end user-dd animated flipInY">
                         <div class="d-flex align-items-center p-3 upper-bg text-white rounded-top">
                             <div class="me-3">
-                                <img src="{{ asset(auth()->guard('super_admin')->user()->personal_image && file_exists(auth()->guard('user')->user()->personal_image) ? auth()->guard('user')->user()->personal_image : 'public/style_files/images/logo.png') }}"
+                                <img src="{{ asset(auth()->guard('super_admin')->user()->personal_image && file_exists(auth()->guard('user')->user()->personal_image) ? auth()->guard('user')->user()->personal_image : 'style_files/images/logo.png') }}"
                                     class="rounded-circle border border-white shadow" width="60" height="60"
                                     alt="Profile Image">
                             </div>
