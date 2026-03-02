@@ -1,8 +1,8 @@
-    <header class="navbar" id="navbar">
+    <header class="navbar navbar--floating" id="navbar">
         <div class="container nav-inner">
             <a class="brand" href="{{ route('index') }}" aria-label="Energy Magic Home">
                 <span class="brand-icon">
-                    <img src="{{ asset('public/style_files/images/logo.png') }}" alt="Magic Energy logo"
+                    <img src="{{ asset('style_files/images/logo.png') }}" alt="Magic Energy logo"
                         style="height: 28px; width: auto;">
                 </span>
             </a>

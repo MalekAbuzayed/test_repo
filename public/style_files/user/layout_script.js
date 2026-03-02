@@ -1,4 +1,23 @@
 /* ======================
+   PAGE PRELOADER
+====================== */
+const pagePreloader = document.getElementById("pagePreloader");
+
+function hidePagePreloader() {
+    if (!pagePreloader) return;
+    window.setTimeout(() => {
+        pagePreloader.classList.add("is-hidden");
+        document.body.classList.remove("preloading");
+    }, 500);
+}
+
+if (document.readyState === "complete") {
+    hidePagePreloader();
+} else {
+    window.addEventListener("load", hidePagePreloader);
+}
+
+/* ======================
    HERO SLIDER + DOTS
 ====================== */
 const slides = document.querySelectorAll(".hero-slide");
@@ -201,25 +220,20 @@ if (anyCounterTrigger) {
 }
 
 /* ======================
-   NAVBAR HIDE ON SCROLL
+   NAVBAR STATE ON SCROLL
 ====================== */
 const navbar = document.getElementById("navbar");
-let lastScrollY = window.scrollY;
+const NAV_SCROLL_THRESHOLD = 24;
 
-window.addEventListener("scroll", () => {
-    const currentScrollY = window.scrollY;
-    const scrollingDown = currentScrollY > lastScrollY;
+function syncNavbarState() {
+    if (!navbar) return;
+    const isScrolled = window.scrollY > NAV_SCROLL_THRESHOLD;
+    navbar.classList.toggle("navbar--scrolled", isScrolled);
+    navbar.classList.toggle("navbar--floating", !isScrolled);
+}
 
-    if (navbar) {
-        if (scrollingDown && currentScrollY > 80) {
-            navbar.classList.add("nav-hidden");
-        } else {
-            navbar.classList.remove("nav-hidden");
-        }
-    }
-
-    lastScrollY = currentScrollY;
-});
+syncNavbarState();
+window.addEventListener("scroll", syncNavbarState);
 
 
 

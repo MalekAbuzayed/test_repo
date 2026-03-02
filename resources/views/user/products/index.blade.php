@@ -1,7 +1,7 @@
 @extends('user.layouts.app')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('public/style_files/user/products.css') }}">
+    <link rel="stylesheet" href="{{ asset('style_files/user/products.css') }}">
 @endsection
 
 @section('content')
