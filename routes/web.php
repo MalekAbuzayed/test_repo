@@ -22,6 +22,7 @@ use App\Http\Controllers\Backend\Admin\OurVisionBackendController;
 use App\Http\Controllers\Backend\Admin\OurGoalBackendController;
 use App\Http\Controllers\Backend\Admin\TeamMemberBackendController;
 use App\Http\Controllers\Backend\Admin\AdminSpecController;
+use App\Http\Controllers\Backend\Admin\ProductFileBackendController;
 
 
 Route::get('/login', [AuthBackendController::class, 'showLoginForm'])->name('login');
@@ -232,7 +233,7 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
             Route::post('/store', [ProductBackendController::class, 'store'])->name('products-store');
             Route::get('/show/{id}', [ProductBackendController::class, 'show'])->name('products-show');
             Route::get('/edit/{id}', [ProductBackendController::class, 'edit'])->name('products-edit');
-            Route::post('/update/{id}', [ProductBackendController::class, 'update'])->name('products-update');
+            Route::put('/update/{id}', [ProductBackendController::class, 'update'])->name('products-update');
             Route::get('/softDelete/{id}', [ProductBackendController::class, 'softDelete'])->name('products-softDelete');
             Route::get('/showSoftDelete', [ProductBackendController::class, 'showSoftDelete'])->name('products-showSoftDelete');
             Route::get('/softDeleteRestore/{id}', [ProductBackendController::class, 'softDeleteRestore'])->name('products-softDeleteRestore');
@@ -241,6 +242,11 @@ Route::prefix('super_admin')->name('super_admin.')->group(function () {
             Route::get('/softDeleteRestoreSelected', [ProductBackendController::class, 'softDeleteRestoreSelected'])->name('products-softDeleteRestoreSelected');
             Route::get('/activeSelected', [ProductBackendController::class, 'activeSelected'])->name('products-activeSelected');
             Route::get('/inactiveSelected', [ProductBackendController::class, 'inactiveSelected'])->name('products-inactiveSelected');
+            Route::delete('/files/{file}', [ProductFileBackendController::class, 'destroy'])
+                ->name('product-files.destroy');
+
+            Route::patch('/files/{file}/primary', [ProductFileBackendController::class, 'setPrimary'])
+                ->name('product-files.primary');
         });
     });
 });

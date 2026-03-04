@@ -338,6 +338,57 @@ h2 {
     padding: 0;
 }
 
+/* ===== INNER PAGES HERO ===== */
+.page-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 25vh;
+    padding: 112px 0 36px;
+    color: var(--white);
+    background-image: linear-gradient(135deg, rgba(197, 44, 38, 0.92), rgba(163, 36, 32, 0.9)), var(--hero-bg);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.page-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 45%);
+    pointer-events: none;
+}
+
+.page-hero__inner {
+    position: relative;
+    z-index: 1;
+}
+
+.page-hero__eyebrow {
+    display: inline-block;
+    letter-spacing: 0.16em;
+    font-weight: 800;
+    font-size: 12px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.page-hero__title {
+    margin: 0 0 10px;
+    font-size: clamp(30px, 3.6vw, 52px);
+    font-weight: 900;
+    color: var(--white);
+}
+
+.page-hero__subtitle {
+    margin: 0;
+    max-width: 780px;
+    font-size: clamp(15px, 1.5vw, 18px);
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.9);
+}
+
 .hero-slider {
     position: relative;
     height: 560px;
@@ -908,6 +959,11 @@ h2 {
     .navbar--scrolled {
         top: 0;
         width: 100%;
+    }
+
+    .page-hero {
+        min-height: 240px;
+        padding: 108px 0 30px;
     }
 
     .hero-slider {

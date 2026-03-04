@@ -22,13 +22,31 @@ class UpdateProductFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'type' => 'required|in:other,batteries,hybrid,onGrid,pv-module',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,zip,rar,txt|max:5120',
-            'status' => 'required|in:1,2',
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'status' => ['required', 'in:1,2'],
+            'subcategory_id' => ['required', 'exists:subcategories,id'],
+
+            // images (2MB)
+            'images' => ['nullable', 'array'],
+            'images.*' => ['file', 'mimes:jpg,jpeg,png,webp,gif', 'max:2048'],
+
+            // typed files
+            'files' => ['nullable', 'array'],
+            'files.*' => ['nullable', 'array'],
+
+            // 5MB documents
+            'files.datasheet.*' => ['file', 'mimes:pdf,doc,docx,xls,xlsx,zip,rar,txt', 'max:5120'],
+            'files.certificate.*' => ['file', 'mimes:pdf,doc,docx,xls,xlsx,zip,rar,txt', 'max:5120'],
+            'files.manual.*' => ['file', 'mimes:pdf,doc,docx,xls,xlsx,zip,rar,txt', 'max:5120'],
+            'files.guide.*' => ['file', 'mimes:pdf,doc,docx,xls,xlsx,zip,rar,txt', 'max:5120'],
+            'files.ond.*' => ['file', 'mimes:pdf,doc,docx,xls,xlsx,zip,rar,txt', 'max:5120'],
+
+            // videos (200MB)
+            'files.install_video.*' => ['file', 'mimes:mp4,mov,avi,webm,mkv', 'max:204800'],
+
+            // specs
+            'spec_values' => ['nullable', 'array'],
         ];
     }
 
@@ -38,20 +56,8 @@ class UpdateProductFormRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'The product name field is required.',
-            'name.max' => 'The product name may not be greater than 255 characters.',
-            'type.required' => 'The product type field is required.',
-            'type.in' => 'The selected product type is invalid.',
-            'title.required' => 'The product title field is required.',
-            'title.max' => 'The product title may not be greater than 255 characters.',
-            'description.required' => 'The product description field is required.',
-            'image.image' => 'The image must be a valid image file.',
-            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, svg, webp.',
-            'image.max' => 'The image may not be greater than 2MB.',
-            'file.mimes' => 'The file must be a file of type: pdf, doc, docx, xls, xlsx, zip, rar, txt.',
-            'file.max' => 'The file may not be greater than 5MB.',
-            'status.required' => 'The status field is required.',
-            'status.in' => 'The selected status is invalid.',
+            'subcategory_id.required' => 'The product type field is required.',
+
         ];
     }
 }

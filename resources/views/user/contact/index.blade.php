@@ -1,12 +1,12 @@
 @extends('user.layouts.app')
 @section('content')
-    <!-- Page Header -->
-    <header class="page-header">
-        <div class="container text-center position-relative">
-            <h1 class="display-4">Contact Us</h1>
-            <p class="lead mb-0">We'd love to hear from you! Reach out to us for any questions, feedback, or support.</p>
-        </div>
-    </header>
+    @include('user.components.page-hero', [
+        'eyebrow' => 'CONTACT',
+        'title' => 'Contact Us',
+        'subtitle' => 'We would love to hear from you. Reach out for questions, feedback, or support.',
+        'backgroundImage' =>
+            'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?q=80&w=2000&auto=format&fit=crop',
+    ])
 
     <!-- Contact Information Section -->
     <section class="py-5">
@@ -219,38 +219,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--secondary-color);
             background-color: #f8f9fa;
-        }
-
-        /* Page Header */
-        .page-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #a32420 100%);
-            color: var(--light-color);
-            padding: 4rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .page-header h1 {
-            font-weight: 700;
-            margin-bottom: 1rem;
-            position: relative;
-        }
-
-        .page-header p {
-            font-size: 1.1rem;
-            opacity: 0.95;
-            position: relative;
         }
 
         /* Contact Info Cards */

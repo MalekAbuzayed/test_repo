@@ -5,6 +5,14 @@
 @endsection
 
 @section('content')
+    @include('user.components.page-hero', [
+        'eyebrow' => 'CATALOG',
+        'title' => 'Products',
+        'subtitle' => 'Explore our latest products and technical specifications.',
+        'backgroundImage' =>
+            'https://images.unsplash.com/photo-1497440001374-f26997328c1b?q=80&w=2000&auto=format&fit=crop',
+    ])
+
     <!-- ================== PRODUCTS PAGE ================== -->
     <main class="section products-page" id="products">
         <div class="container">

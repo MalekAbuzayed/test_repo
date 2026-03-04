@@ -306,25 +306,8 @@ class ProductBackendController extends Controller
 
             return view('admin.products.edit', compact('product', 'subcategories', 'existingSpecValues'));
         } catch (\Throwable $th) {
-            // ...support tickets (keep your logic)
-            $function_name = $route->getActionName();
-            $check_old_errors = (new SupportTicket)->where([
-                'error_location' => $th->getFile(),
-                'error_description' => $th->getMessage(),
-                'function_name' => $function_name,
-                'error_line' => $th->getLine(),
-            ])->get();
-
-            $end_error_ticket = $check_old_errors->count() == 0
-                ? SupportTicket::create([
-                    'error_location' => $th->getFile(),
-                    'error_description' => $th->getMessage(),
-                    'function_name' => $function_name,
-                    'error_line' => $th->getLine(),
-                ])
-                : $check_old_errors->first();
-
-            return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
+            // keep your ticket logic...
+            throw $th;
         }
     }
 

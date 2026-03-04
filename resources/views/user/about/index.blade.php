@@ -1,6 +1,14 @@
 @extends('user.layouts.app')
 
 @section('content')
+    @include('user.components.page-hero', [
+        'eyebrow' => 'ABOUT',
+        'title' => 'About Us',
+        'subtitle' => 'Discover our mission, vision, and the team powering sustainable energy solutions.',
+        'backgroundImage' =>
+            'https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=2000&auto=format&fit=crop',
+    ])
+
     <!-- Who We Are Section -->
     <section class="py-5 bg-light">
         <div class="container">
