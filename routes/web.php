@@ -261,7 +261,13 @@ Route::get('/about', [AboutUsController::class, 'index'])->name('about');
 Route::get('/contact_us', [ContactUsController::class, 'index'])->name('contact_us');
 Route::get('/faq', [FAQController::class, 'index'])->name('faq');
 Route::get('/products', [ProductController::class, 'index'])->name('products');
+Route::get('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
 Route::get('/product', [ProductController::class, 'show'])->name('product');
+Route::get('/product/specs/key', [ProductController::class, 'keySpecs'])->name('product.specs.key');
+Route::get('/product/specs/other', [ProductController::class, 'otherSpecs'])->name('product.specs.other');
+Route::get('/product/files/list', [ProductController::class, 'filesList'])->name('product.files.list');
+Route::get('/product/files/download/{file}', [ProductController::class, 'downloadFile'])->name('product.files.download');
+Route::get('/product/files/download-all', [ProductController::class, 'downloadAll'])->name('product.files.downloadAll');
 Route::get('/product/file/{id}', [ProductController::class, 'file'])->name('product.file');
 Route::get('/admin/spec-template/{subcategory}', [AdminSpecController::class, 'template'])
     ->name('admin.spec-template');

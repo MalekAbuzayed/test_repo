@@ -45,6 +45,13 @@ class SubcategorySeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'category_id' => $batteries->id,
+                'name' => 'All in one',
+                'status' => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

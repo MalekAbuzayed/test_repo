@@ -19,6 +19,10 @@ return new class extends Migration {
                 ->constrained('subcategories')
                 ->restrictOnDelete();
 
+            $table->foreignId('grandchild_id')
+                ->constrained('grandchilds')
+                ->restrictOnDelete();
+
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('status')->nullable();

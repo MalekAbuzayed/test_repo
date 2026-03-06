@@ -112,6 +112,14 @@
     justify-content: center;
 }
 
+.filter-empty {
+    display: block;
+    padding: 10px 12px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
 .products-main {
     width: 100%;
 }

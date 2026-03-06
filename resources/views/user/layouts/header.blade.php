@@ -13,28 +13,35 @@
                 <div class="nav-item nav-item--has-dropdown">
                     <button class="nav-link nav-dropdown-trigger" type="button" aria-haspopup="true"
                         aria-expanded="false" aria-controls="productsDropdown">
-                        Products
+                        <span class="nav-trigger-label">Products</span>
+                        <span class="nav-trigger-caret" aria-hidden="true"></span>
                     </button>
 
                     <div class="nav-dropdown-menu" id="productsDropdown" aria-label="Products Categories">
                         <a class="nav-sub-link nav-sub-link--all" href="{{ route('products') }}">All Products</a>
 
                         <div class="nav-dropdown-grid">
-                            <div class="nav-dropdown-group">
-                                <h4 class="nav-dropdown-heading">Solar Solutions</h4>
-                                <a class="nav-sub-link" href="#" data-category="solar-solutions"
-                                    data-subcategory="residential-systems">Residential Systems</a>
-                                <a class="nav-sub-link" href="#" data-category="solar-solutions"
-                                    data-subcategory="commercial-systems">Commercial Systems</a>
-                            </div>
+                            @forelse ($navProductCategories ?? collect() as $category)
+                                <div class="nav-dropdown-group">
+                                    <h4 class="nav-dropdown-heading">{{ $category->name }}</h4>
 
-                            <div class="nav-dropdown-group">
-                                <h4 class="nav-dropdown-heading">Energy Storage</h4>
-                                <a class="nav-sub-link" href="#" data-category="energy-storage"
-                                    data-subcategory="home-batteries">Home Batteries</a>
-                                <a class="nav-sub-link" href="#" data-category="energy-storage"
-                                    data-subcategory="industrial-batteries">Industrial Batteries</a>
-                            </div>
+                                    @forelse ($category->subcategories as $subcategory)
+                                        <a class="nav-sub-link"
+                                            href="{{ route('products', ['category_id' => $category->id, 'subcategory_id' => $subcategory->id]) }}"
+                                            data-category="{{ $category->id }}"
+                                            data-subcategory="{{ $subcategory->id }}">
+                                            {{ $subcategory->name }}
+                                        </a>
+                                    @empty
+                                        <span class="nav-sub-link nav-sub-link--muted">No subcategories</span>
+                                    @endforelse
+                                </div>
+                            @empty
+                                <div class="nav-dropdown-group">
+                                    <h4 class="nav-dropdown-heading">No Categories</h4>
+                                    <span class="nav-sub-link nav-sub-link--muted">No product filters available.</span>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>

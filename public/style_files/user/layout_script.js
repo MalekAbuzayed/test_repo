@@ -109,7 +109,37 @@ function isMobileNavViewport() {
     return window.innerWidth <= 760;
 }
 
+function closeProductsFold() {
+    if (!productsNavItem || !productsDropdownTrigger) return;
+    productsNavItem.classList.remove("is-open");
+    productsDropdownTrigger.setAttribute("aria-expanded", "false");
+}
+
 if (burgerBtn && navLinks) {
+    if (productsNavItem && productsDropdownTrigger) {
+        productsNavItem.addEventListener("mouseenter", () => {
+            if (isMobileNavViewport()) return;
+            productsDropdownTrigger.setAttribute("aria-expanded", "true");
+        });
+
+        productsNavItem.addEventListener("mouseleave", () => {
+            if (isMobileNavViewport()) return;
+            productsDropdownTrigger.setAttribute("aria-expanded", "false");
+        });
+
+        productsNavItem.addEventListener("focusin", () => {
+            if (isMobileNavViewport()) return;
+            productsDropdownTrigger.setAttribute("aria-expanded", "true");
+        });
+
+        productsNavItem.addEventListener("focusout", (event) => {
+            if (isMobileNavViewport()) return;
+            if (!productsNavItem.contains(event.relatedTarget)) {
+                productsDropdownTrigger.setAttribute("aria-expanded", "false");
+            }
+        });
+    }
+
     if (productsDropdownTrigger && productsNavItem) {
         productsDropdownTrigger.addEventListener("click", (event) => {
             if (!isMobileNavViewport()) return;
@@ -128,11 +158,7 @@ if (burgerBtn && navLinks) {
 
             navLinks.classList.remove("open");
             burgerBtn.setAttribute("aria-expanded", "false");
-
-            if (productsNavItem && productsDropdownTrigger) {
-                productsNavItem.classList.remove("is-open");
-                productsDropdownTrigger.setAttribute("aria-expanded", "false");
-            }
+            closeProductsFold();
         });
     });
 
@@ -140,9 +166,8 @@ if (burgerBtn && navLinks) {
         const isOpen = navLinks.classList.toggle("open");
         burgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
 
-        if (!isOpen && productsNavItem && productsDropdownTrigger) {
-            productsNavItem.classList.remove("is-open");
-            productsDropdownTrigger.setAttribute("aria-expanded", "false");
+        if (!isOpen) {
+            closeProductsFold();
         }
     });
 
@@ -150,11 +175,7 @@ if (burgerBtn && navLinks) {
         link.addEventListener("click", () => {
             navLinks.classList.remove("open");
             burgerBtn.setAttribute("aria-expanded", "false");
-
-            if (productsNavItem && productsDropdownTrigger) {
-                productsNavItem.classList.remove("is-open");
-                productsDropdownTrigger.setAttribute("aria-expanded", "false");
-            }
+            closeProductsFold();
         });
     });
 
@@ -162,11 +183,7 @@ if (burgerBtn && navLinks) {
         if (!navLinks.contains(event.target) && !burgerBtn.contains(event.target)) {
             navLinks.classList.remove("open");
             burgerBtn.setAttribute("aria-expanded", "false");
-
-            if (productsNavItem && productsDropdownTrigger) {
-                productsNavItem.classList.remove("is-open");
-                productsDropdownTrigger.setAttribute("aria-expanded", "false");
-            }
+            closeProductsFold();
         }
     });
 
@@ -174,11 +191,7 @@ if (burgerBtn && navLinks) {
         if (window.innerWidth > 760) {
             navLinks.classList.remove("open");
             burgerBtn.setAttribute("aria-expanded", "false");
-
-            if (productsNavItem && productsDropdownTrigger) {
-                productsNavItem.classList.remove("is-open");
-                productsDropdownTrigger.setAttribute("aria-expanded", "false");
-            }
+            closeProductsFold();
         }
     });
 }

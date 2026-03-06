@@ -2,57 +2,533 @@
 
 namespace App\Http\Controllers\User;
 
-use Illuminate\Http\Request;
-use App\Models\Product;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\ProductFile;
+use App\Models\Subcategory;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use ZipArchive;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('category')->orderBy('created_at', 'desc')->get();
+        $selected = $this->resolveSelectedFilters(
+            $request->query('category_id'),
+            $request->query('subcategory_id'),
+            $request->query('search')
+        );
 
-        return view('user.products.index', compact('products'));
+        $products = $this->applyProductFilters(
+            $this->baseProductsQuery(),
+            $selected['category_id'],
+            $selected['subcategory_id'],
+            $selected['search']
+        )->get();
+
+        $categories = $this->activeCategoriesTree();
+
+        return view('user.products.index', compact('products', 'categories', 'selected'));
     }
+
+    public function filter(Request $request)
+    {
+        $selected = $this->resolveSelectedFilters(
+            $request->query('category_id'),
+            $request->query('subcategory_id'),
+            $request->query('search')
+        );
+
+        $products = $this->applyProductFilters(
+            $this->baseProductsQuery(),
+            $selected['category_id'],
+            $selected['subcategory_id'],
+            $selected['search']
+        )->get();
+
+        $subcategories = collect();
+        if (!empty($selected['category_id'])) {
+            $subcategories = Subcategory::query()
+                ->where('category_id', $selected['category_id'])
+                ->where($this->activeStatusCondition())
+                ->orderBy('name')
+                ->get(['id', 'name', 'category_id']);
+        }
+
+        return response()->json([
+            'products' => $products->map(fn(Product $product) => $this->serializeProductCard($product))->values(),
+            'count' => $products->count(),
+            'selected' => $selected,
+            'subcategories' => $subcategories->values(),
+        ]);
+    }
+
     public function show(Request $request, $id = null)
     {
-        $productId = $id ?: $request->query('id');
-
-        if ($productId) {
-            $product = Product::with(['category', 'specifications'])->find($productId);
-        } else {
-            $product = Product::with(['category', 'specifications'])->orderBy('created_at', 'desc')->first();
-        }
+        $product = $this->resolveProductFromRequest($request, $id);
 
         if (!$product) {
             return redirect()->route('products')->with('danger', 'Record Not Found');
         }
 
-        $category = $product->category;
-        $specs = $product->specifications;
+        $images = $product->files->where('type', 'image')->values();
+        $keySpecs = $this->buildKeySpecs($product);
 
-        return view('user.products.show', compact('product', 'category', 'specs'));
+        return view('user.products.show', compact('product', 'images', 'keySpecs'));
+    }
+
+    public function keySpecs(Request $request)
+    {
+        $product = $this->resolveProductFromRequest($request);
+        if (!$product) {
+            return response()->json(['message' => 'Product not found.'], 404);
+        }
+
+        return response()->json([
+            'product_id' => $product->id,
+            'key_specs' => $this->buildKeySpecs($product),
+        ]);
+    }
+
+    public function otherSpecs(Request $request)
+    {
+        $product = $this->resolveProductFromRequest($request);
+        if (!$product) {
+            return response()->json(['message' => 'Product not found.'], 404);
+        }
+
+        return response()->json([
+            'product_id' => $product->id,
+            'groups' => $this->buildOtherSpecsGrouped($product),
+        ]);
+    }
+
+    public function filesList(Request $request)
+    {
+        $product = $this->resolveProductFromRequest($request);
+        if (!$product) {
+            return response()->json(['message' => 'Product not found.'], 404);
+        }
+
+        $filesByType = $this->buildDownloadFilesByType($product);
+        $allCount = collect($filesByType)->sum(fn(array $typeBlock) => count($typeBlock['files']));
+
+        return response()->json([
+            'product_id' => $product->id,
+            'types' => array_values($filesByType),
+            'all_files_count' => $allCount,
+        ]);
+    }
+
+    public function downloadFile(ProductFile $file, Request $request)
+    {
+        $product = $this->resolveProductFromRequest($request);
+        if (!$product || (int) $file->product_id !== (int) $product->id) {
+            abort(404);
+        }
+
+        if ($file->type === 'image' || !$this->isActiveStatusValue($file->getRawOriginal('status'))) {
+            abort(404);
+        }
+
+        $fullPath = $this->resolveStoragePath($file->path);
+        if (!$fullPath) {
+            abort(404);
+        }
+
+        $downloadName = $file->title ?: basename($file->path);
+        return response()->download($fullPath, $downloadName);
+    }
+
+    public function downloadAll(Request $request)
+    {
+        $product = $this->resolveProductFromRequest($request);
+        if (!$product) {
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Product not found.'], 404)
+                : redirect()->route('products')->with('danger', 'Product not found.');
+        }
+
+        $files = $product->files
+            ->where('type', '!=', 'image')
+            ->filter(fn(ProductFile $file) => $this->isActiveStatusValue($file->getRawOriginal('status')))
+            ->values();
+
+        if ($files->isEmpty()) {
+            return $request->expectsJson()
+                ? response()->json(['message' => 'No files available for download.'], 422)
+                : redirect()->back()->with('danger', 'No files available for download.');
+        }
+
+        $tempDir = storage_path('app/temp');
+        if (!is_dir($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+
+        $zipFilename = 'product-' . $product->id . '-files.zip';
+        $zipPath = $tempDir . DIRECTORY_SEPARATOR . Str::uuid() . '-' . $zipFilename;
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Failed to prepare zip file.'], 500)
+                : redirect()->back()->with('danger', 'Failed to prepare zip file.');
+        }
+
+        foreach ($files as $file) {
+            $fullPath = $this->resolveStoragePath($file->path);
+            if (!$fullPath) {
+                continue;
+            }
+
+            $entryName = $file->type . '/' . ($file->title ?: basename($file->path));
+            $zip->addFile($fullPath, $entryName);
+        }
+
+        $zip->close();
+
+        return response()->download($zipPath, $zipFilename)->deleteFileAfterSend(true);
     }
 
     public function file($id)
     {
-        $product = Product::find($id);
-        if (!$product || !$product->file) {
+        $product = Product::query()
+            ->with([
+                'files' => function ($q) {
+                    $q->where('type', '!=', 'image')
+                        ->where($this->activeStatusCondition())
+                        ->orderBy('sort_order')
+                        ->orderBy('id');
+                },
+            ])
+            ->where('id', $id)
+            ->first();
+
+        if (!$product) {
             abort(404);
         }
 
-        $filePath = str_replace('\\', '/', $product->file);
-        $publicPath = public_path($filePath);
-        $basePath = base_path($filePath);
+        $file = $product->files->first();
+        if (!$file) {
+            abort(404);
+        }
 
-        if (file_exists($publicPath)) {
-            $fullPath = $publicPath;
-        } elseif (file_exists($basePath)) {
-            $fullPath = $basePath;
-        } else {
+        $fullPath = $this->resolveStoragePath($file->path);
+        if (!$fullPath) {
             abort(404);
         }
 
         return response()->file($fullPath);
+    }
+
+    private function baseProductsQuery(): Builder
+    {
+        return Product::query()
+            ->with([
+                'category:id,name',
+                'subcategory:id,name,category_id',
+                'files' => function ($q) {
+                    $q->select('id', 'product_id', 'type', 'path', 'is_primary', 'sort_order')
+                        ->where('type', 'image')
+                        ->orderByDesc('is_primary')
+                        ->orderBy('sort_order');
+                },
+            ])
+            ->where($this->activeStatusCondition())
+            ->orderBy('created_at', 'desc');
+    }
+
+    private function applyProductFilters(Builder $query, ?int $categoryId, ?int $subcategoryId, ?string $search): Builder
+    {
+        if (!empty($categoryId)) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if (!empty($subcategoryId)) {
+            $query->where('subcategory_id', $subcategoryId);
+        }
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        }
+
+        return $query;
+    }
+
+    private function activeCategoriesTree()
+    {
+        return Category::query()
+            ->where($this->activeStatusCondition())
+            ->with([
+                'subcategories' => function ($q) {
+                    $q->where($this->activeStatusCondition())->orderBy('name');
+                },
+            ])
+            ->orderBy('name')
+            ->get(['id', 'name']);
+    }
+
+    private function resolveSelectedFilters($categoryInput, $subcategoryInput, $searchInput): array
+    {
+        $categoryId = $this->normalizeId($categoryInput);
+        $subcategoryId = $this->normalizeId($subcategoryInput);
+        $search = trim((string) ($searchInput ?? ''));
+        $search = $search === '' ? null : $search;
+
+        if (!empty($categoryId)) {
+            $categoryExists = Category::query()
+                ->where('id', $categoryId)
+                ->where($this->activeStatusCondition())
+                ->exists();
+
+            if (!$categoryExists) {
+                $categoryId = null;
+            }
+        }
+
+        if (!empty($subcategoryId)) {
+            $subcategory = Subcategory::query()
+                ->where('id', $subcategoryId)
+                ->where($this->activeStatusCondition())
+                ->first(['id', 'category_id']);
+
+            if (!$subcategory) {
+                $subcategoryId = null;
+            } else {
+                if (!empty($categoryId) && (int) $subcategory->category_id !== (int) $categoryId) {
+                    $subcategoryId = null;
+                } elseif (empty($categoryId)) {
+                    $categoryId = (int) $subcategory->category_id;
+                }
+            }
+        }
+
+        return [
+            'category_id' => $categoryId,
+            'subcategory_id' => $subcategoryId,
+            'search' => $search,
+        ];
+    }
+
+    private function resolveProductFromRequest(Request $request, $routeId = null): ?Product
+    {
+        $productId = $routeId ?: $request->query('id');
+
+        $query = Product::query()
+            ->with([
+                'category:id,name',
+                'subcategory:id,name,category_id',
+                'files' => function ($q) {
+                    $q->where($this->activeStatusCondition())
+                        ->orderByRaw("CASE WHEN type = 'image' THEN 0 ELSE 1 END")
+                        ->orderByDesc('is_primary')
+                        ->orderBy('sort_order')
+                        ->orderBy('id');
+                },
+                'specValues' => function ($q) {
+                    $q->whereNotNull('value_text')
+                        ->where('value_text', '!=', '')
+                        ->with([
+                            'field' => function ($fieldQuery) {
+                                $fieldQuery->where($this->activeStatusCondition())
+                                    ->with([
+                                        'group' => function ($groupQuery) {
+                                            $groupQuery->select('id', 'title', 'sort_order');
+                                        },
+                                    ]);
+                            },
+                        ]);
+                },
+            ])
+            ->where($this->activeStatusCondition())
+            ->orderBy('created_at', 'desc');
+
+        if ($productId) {
+            return $query->where('id', (int) $productId)->first();
+        }
+
+        return $query->first();
+    }
+
+    private function buildKeySpecs(Product $product): array
+    {
+        return $product->specValues
+            ->filter(function ($specValue) {
+                return $specValue->field && (bool) $specValue->field->is_key;
+            })
+            ->sortBy(function ($specValue) {
+                return [
+                    (int) ($specValue->field->group->sort_order ?? 999999),
+                    (int) ($specValue->field->sort_order ?? 999999),
+                    (int) $specValue->id,
+                ];
+            })
+            ->map(function ($specValue) {
+                return [
+                    'label' => $specValue->field->label,
+                    'value' => $specValue->value_text,
+                    'unit' => $specValue->field->unit,
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    private function buildOtherSpecsGrouped(Product $product): array
+    {
+        $nonKeySpecs = $product->specValues
+            ->filter(function ($specValue) {
+                return $specValue->field && !(bool) $specValue->field->is_key;
+            })
+            ->sortBy(function ($specValue) {
+                return [
+                    (int) ($specValue->field->group->sort_order ?? 999999),
+                    (int) ($specValue->field->sort_order ?? 999999),
+                    (int) $specValue->id,
+                ];
+            });
+
+        $grouped = [];
+
+        foreach ($nonKeySpecs as $specValue) {
+            $groupId = (string) ($specValue->field->group->id ?? 'ungrouped');
+            $groupTitle = $specValue->field->group->title ?? 'Other Details';
+            $groupSortOrder = (int) ($specValue->field->group->sort_order ?? 999999);
+
+            if (!isset($grouped[$groupId])) {
+                $grouped[$groupId] = [
+                    'title' => $groupTitle,
+                    '_sort_order' => $groupSortOrder,
+                    'fields' => [],
+                ];
+            }
+
+            $grouped[$groupId]['fields'][] = [
+                'label' => $specValue->field->label,
+                'value' => $specValue->value_text,
+                'unit' => $specValue->field->unit,
+                'sort_order' => (int) ($specValue->field->sort_order ?? 999999),
+            ];
+        }
+
+        uasort($grouped, function ($a, $b) {
+            return $a['_sort_order'] <=> $b['_sort_order'];
+        });
+
+        return array_values(array_map(function ($group) {
+            usort($group['fields'], function ($a, $b) {
+                return $a['sort_order'] <=> $b['sort_order'];
+            });
+            unset($group['_sort_order']);
+            return $group;
+        }, $grouped));
+    }
+
+    private function buildDownloadFilesByType(Product $product): array
+    {
+        $files = $product->files
+            ->where('type', '!=', 'image')
+            ->filter(fn(ProductFile $file) => $this->isActiveStatusValue($file->getRawOriginal('status')))
+            ->sortBy(fn(ProductFile $file) => [(string) $file->type, (int) ($file->sort_order ?? 999999), (int) $file->id])
+            ->values();
+
+        $grouped = [];
+
+        foreach ($files as $file) {
+            $type = (string) $file->type;
+            $label = ucwords(str_replace('_', ' ', $type));
+
+            if (!isset($grouped[$type])) {
+                $grouped[$type] = [
+                    'type' => $type,
+                    'label' => $label,
+                    'files' => [],
+                ];
+            }
+
+            $grouped[$type]['files'][] = [
+                'id' => $file->id,
+                'title' => $file->title ?: basename($file->path),
+                'mime_type' => $file->mime_type,
+                'size_bytes' => (int) $file->size_bytes,
+                'download_url' => route('product.files.download', ['file' => $file->id, 'id' => $product->id]),
+            ];
+        }
+
+        ksort($grouped);
+        return $grouped;
+    }
+
+    private function normalizeId($value): ?int
+    {
+        $id = filter_var($value, FILTER_VALIDATE_INT);
+        return $id && $id > 0 ? (int) $id : null;
+    }
+
+    private function activeStatusCondition(): \Closure
+    {
+        return function ($q) {
+            $q->where('status', 1)
+                ->orWhere('status', '1')
+                ->orWhereRaw('LOWER(status) = ?', ['active']);
+        };
+    }
+
+    private function isActiveStatusValue($status): bool
+    {
+        if ($status === null) {
+            return false;
+        }
+
+        $value = strtolower(trim((string) $status));
+        return $value === '1' || $value === 'active';
+    }
+
+    private function resolveStoragePath(?string $path): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+        $normalized = ltrim(str_replace('\\', '/', $path), '/');
+        $diskPath = Storage::disk('public')->path($normalized);
+        if (file_exists($diskPath)) {
+            return $diskPath;
+        }
+
+        $publicStoragePath = public_path('storage/' . $normalized);
+        if (file_exists($publicStoragePath)) {
+            return $publicStoragePath;
+        }
+
+        $basePath = base_path($normalized);
+        if (file_exists($basePath)) {
+            return $basePath;
+        }
+
+        return null;
+    }
+
+    private function serializeProductCard(Product $product): array
+    {
+        $image = $product->files->first();
+        $imageUrl = $image ? asset('storage/' . ltrim($image->path, '/')) : null;
+
+        return [
+            'id' => $product->id,
+            'title' => $product->title,
+            'description' => $product->description,
+            'category_name' => $product->category?->name,
+            'subcategory_name' => $product->subcategory?->name,
+            'image_url' => $imageUrl,
+            'product_url' => route('product', ['id' => $product->id]),
+        ];
     }
 }

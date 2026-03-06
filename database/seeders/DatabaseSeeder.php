@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             PrivacySeeder::class,
             CategorySeeder::class,
             SubcategorySeeder::class,
+            GrandchildSeeder::class,
             SpecTemplateSeeder::class,
         ]);
     }
