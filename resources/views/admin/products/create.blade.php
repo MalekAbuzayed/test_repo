@@ -45,6 +45,8 @@
                         <form action="{{ route('super_admin.products-store') }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
+                            <input type="hidden" id="specTemplateBase"
+                                value="{{ route('admin.spec-template', ['subcategory' => '__ID__']) }}">
                             @if ($errors->any())
                                 <div class="alert alert-danger">
                                     <strong>There were some problems with your input:</strong>
@@ -111,9 +113,30 @@
                                             <option value="">--- Select subcategory ---</option>
                                             @foreach ($subcategories as $sub)
                                                 <option value="{{ $sub->id }}" @selected(old('subcategory_id') == $sub->id)>
-                                                    {{ $sub->name }}
+                                                    {{ $sub->category?->name ? $sub->category->name . ' / ' : '' }}{{ $sub->name }}
                                                 </option>
                                             @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {{-- Grandchild --}}
+                                <div class="col-md-6 d-none" id="grandchildFieldWrapper">
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            <i data-feather="git-branch" class="feather-sm text-info fill-white me-2"></i>
+                                            Grandchild
+                                            <strong class="text-danger">
+                                                @error('grandchild_id')
+                                                    ( {{ $message }} )
+                                                @enderror
+                                            </strong>
+                                        </label>
+
+                                        <select id="grandchildSelect" name="grandchild_id"
+                                            class="form-control form-select border border-info @error('grandchild_id') border-danger @enderror custom_select_style"
+                                            required>
+                                            <option value="">--- Select grandchild ---</option>
                                         </select>
                                     </div>
                                 </div>
@@ -265,12 +288,31 @@
 @endsection
 
 @push('scripts')
+    @php
+        $subcategoryTree = $subcategories
+            ->map(fn($subcategory) => [
+                'id' => $subcategory->id,
+                'name' => $subcategory->name,
+                'grandchilds' => $subcategory->grandchilds
+                    ->map(fn($grandchild) => [
+                        'id' => $grandchild->id,
+                        'name' => $grandchild->name,
+                    ])
+                    ->values(),
+            ])
+            ->values();
+    @endphp
     <script>
-        // Create page: no existing spec values
-        window.existingSpecValues = {};
+        window.existingSpecValues = @json(old('spec_values', []));
+        const subcategories = @json($subcategoryTree);
+
 
         const specsContainer = document.getElementById('specsContainer');
         const subSelect = document.getElementById('subcategorySelect');
+        const grandchildSelect = document.getElementById('grandchildSelect');
+        const grandchildFieldWrapper = document.getElementById('grandchildFieldWrapper');
+        const templateBase = document.getElementById('specTemplateBase').value;
+        let previousSubcategoryId = subSelect.value || '';
 
         function esc(str) {
             return String(str ?? '').replace(/[&<>"']/g, s => ({
@@ -284,6 +326,31 @@
 
         function inputName(fieldId) {
             return `spec_values[${fieldId}]`;
+        }
+
+        function getGrandchildsBySubcategory(subcategoryId) {
+            if (!subcategoryId) return [];
+            const subcategory = subcategories.find((item) => String(item.id) === String(subcategoryId));
+            return subcategory && Array.isArray(subcategory.grandchilds) ? subcategory.grandchilds : [];
+        }
+
+        function renderGrandchildOptions(subcategoryId, selectedGrandchildId = '') {
+            const grandchilds = getGrandchildsBySubcategory(subcategoryId);
+            let html = '<option value="">--- Select grandchild ---</option>';
+
+            grandchilds.forEach((grandchild) => {
+                const selected = String(selectedGrandchildId) === String(grandchild.id) ? 'selected' : '';
+                html += `<option value="${esc(grandchild.id)}" ${selected}>${esc(grandchild.name)}</option>`;
+            });
+
+            grandchildSelect.innerHTML = html;
+            const shouldShow = !!subcategoryId && grandchilds.length > 0;
+            if (!shouldShow) {
+                grandchildSelect.value = '';
+            }
+            grandchildSelect.disabled = !shouldShow;
+            grandchildSelect.required = shouldShow;
+            grandchildFieldWrapper.classList.toggle('d-none', !shouldShow);
         }
 
         function renderField(field, existingValue) {
@@ -361,7 +428,7 @@
                 return;
             }
 
-            const res = await fetch(`/admin/spec-template/${subcategoryId}`, {
+            const res = await fetch(templateBase.replace('__ID__', subcategoryId), {
                 headers: {
                     'Accept': 'application/json'
                 }
@@ -377,12 +444,20 @@
         }
 
         subSelect.addEventListener('change', (e) => {
-            window.existingSpecValues = {}; // reset (subcategory changed)
-            loadTemplate(e.target.value);
+            const nextSubcategoryId = e.target.value;
+            renderGrandchildOptions(nextSubcategoryId);
+
+            if (previousSubcategoryId !== nextSubcategoryId) {
+                window.existingSpecValues = {};
+                previousSubcategoryId = nextSubcategoryId;
+            }
+
+            loadTemplate(nextSubcategoryId);
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             const current = subSelect.value;
+            renderGrandchildOptions(current, @json(old('grandchild_id')));
             if (current) loadTemplate(current);
         });
     </script>

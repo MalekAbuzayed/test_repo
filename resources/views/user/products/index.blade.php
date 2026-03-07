@@ -20,7 +20,7 @@
                     <span class="eyebrow">PRODUCTS</span>
                     <h2>Products Catalog</h2>
                     <p class="subtext products-sub">
-                        Explore products by category and subcategory.
+                        Explore products by category and product family.
                     </p>
                 </div>
 
@@ -54,7 +54,7 @@
 
                     <div class="filter-card">
                         <h3 class="filter-title">Subcategories</h3>
-                        <p class="filter-hint">Pick a subcategory or view all in selected category.</p>
+                        <p class="filter-hint">Pick a subcategory to reveal its related product families.</p>
 
                         <div class="filter-group" id="subcategoryFilterGroup"></div>
 
@@ -65,18 +65,6 @@
                 </aside>
 
                 <section class="products-main" aria-label="Products list">
-                    <div class="products-toolbar">
-                        <div class="search-wrap">
-                            <input class="search-input" id="searchInput" type="search"
-                                placeholder="Search products (title, description...)" autocomplete="off"
-                                value="{{ $selected['search'] ?? '' }}" />
-                        </div>
-
-                        <div class="toolbar-actions">
-                            <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
-                        </div>
-                    </div>
-
                     <div id="productsFetchError" class="text-danger small mb-2 d-none"></div>
 
                     <div class="products-grid" id="productsGrid">
@@ -99,33 +87,31 @@
             const subcategoryGroup = document.getElementById('subcategoryFilterGroup');
             const productsGrid = document.getElementById('productsGrid');
             const resultsCount = document.getElementById('resultsCount');
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
             const clearBtn = document.getElementById('clearFiltersBtn');
             const errorBox = document.getElementById('productsFetchError');
 
             let currentCategoryId = selectedState.category_id ? String(selectedState.category_id) : '';
             let currentSubcategoryId = selectedState.subcategory_id ? String(selectedState.subcategory_id) : '';
-            let currentSearch = selectedState.search || '';
+            let currentGrandchildId = selectedState.grandchild_id ? String(selectedState.grandchild_id) : '';
+
+            function esc(value) {
+                return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;',
+                } [char]));
+            }
 
             function getSubcategoriesByCategory(categoryId) {
                 if (!categoryId) return [];
-                const category = categories.find(c => String(c.id) === String(categoryId));
+                const category = categories.find((item) => String(item.id) === String(categoryId));
                 return category && Array.isArray(category.subcategories) ? category.subcategories : [];
             }
 
-            function renderSubcategories(categoryId, selectedSubcategoryId = '') {
+            function renderSubcategoryTree(categoryId, selectedSubcategoryId = '', selectedGrandchildId = '') {
                 const subcategories = getSubcategoriesByCategory(categoryId);
-
-                if (!categoryId) {
-                    subcategoryGroup.innerHTML = `
-                        <label class="filter-item">
-                            <input class="filter-check subcategory-check" type="radio" name="subcategory_id" value="" checked>
-                            <span>All Subcategories</span>
-                        </label>
-                    `;
-                    return;
-                }
 
                 let html = `
                     <label class="filter-item">
@@ -134,58 +120,89 @@
                     </label>
                 `;
 
-                if (!subcategories.length) {
-                    html += `<span class="filter-empty">No subcategories available.</span>`;
-                } else {
-                    subcategories.forEach(sub => {
-                        const checked = String(selectedSubcategoryId) === String(sub.id) ? 'checked' : '';
-                        html += `
-                            <label class="filter-item">
-                                <input class="filter-check subcategory-check" type="radio" name="subcategory_id" value="${sub.id}" ${checked}>
-                                <span>${sub.name}</span>
-                            </label>
-                        `;
-                    });
+                if (!categoryId) {
+                    html += `<span class="filter-empty">Choose a category to browse subcategories.</span>`;
+                    subcategoryGroup.innerHTML = html;
+                    return;
                 }
 
+                if (!subcategories.length) {
+                    html += `<span class="filter-empty">No subcategories available.</span>`;
+                    subcategoryGroup.innerHTML = html;
+                    return;
+                }
+
+                html += `<ul class="subcategory-tree">`;
+
+                subcategories.forEach((subcategory) => {
+                    const isActive = String(selectedSubcategoryId) === String(subcategory.id);
+                    const grandchilds = Array.isArray(subcategory.grandchilds) ? subcategory.grandchilds : [];
+                    let grandchildHtml = '';
+
+                    if (grandchilds.length) {
+                        grandchildHtml = grandchilds.map((grandchild) => {
+                            const checked = String(selectedGrandchildId) === String(grandchild.id) ? 'checked' : '';
+                            const activeClass = checked ? ' is-active' : '';
+
+                            return `
+                                <li class="grandchild-item">
+                                    <label class="grandchild-option${activeClass}">
+                                        <input class="filter-check grandchild-check" type="radio" name="grandchild_id" value="${esc(grandchild.id)}" ${checked}>
+                                        <span>${esc(grandchild.name)}</span>
+                                    </label>
+                                </li>
+                            `;
+                        }).join('');
+                    } else {
+                        grandchildHtml = `<li class="grandchild-item grandchild-item--empty"><span class="filter-empty">No related items.</span></li>`;
+                    }
+
+                    html += `
+                        <li class="subcategory-node">
+                            <label class="subcategory-option${isActive ? ' is-active' : ''}">
+                                <input class="filter-check subcategory-check" type="radio" name="subcategory_id" value="${esc(subcategory.id)}" ${isActive ? 'checked' : ''}>
+                                <span>${esc(subcategory.name)}</span>
+                            </label>
+                            <div class="grandchild-wrap${isActive ? ' is-open' : ''}">
+                                <ul class="grandchild-list">
+                                    ${grandchildHtml}
+                                </ul>
+                            </div>
+                        </li>
+                    `;
+                });
+
+                html += `</ul>`;
                 subcategoryGroup.innerHTML = html;
             }
 
             function productCardTemplate(product) {
                 const imageUrl = product.image_url || `https://picsum.photos/seed/product-${product.id}/900/650`;
-                const esc = (value) => {
-                    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
-                        '&': '&amp;',
-                        '<': '&lt;',
-                        '>': '&gt;',
-                        '"': '&quot;',
-                        "'": '&#39;',
-                    } [char]));
-                };
-
                 const safeTitle = esc(product.title || '');
                 const rawDescription = String(product.description || '');
                 const safeDescription = esc(rawDescription.length > 140 ? `${rawDescription.slice(0, 140)}...` :
                     rawDescription);
                 const safeCategory = esc(product.category_name || 'N/A');
                 const safeSubcategory = esc(product.subcategory_name || 'N/A');
+                const safeGrandchild = esc(product.grandchild_name || 'N/A');
                 const safeProductUrl = esc(product.product_url || '#');
                 const safeImageUrl = esc(imageUrl);
 
                 return `
-                    <article class="product-card">
-                        <div class="product-media">
-                            <img src="${safeImageUrl}" alt="${safeTitle}">
-                        </div>
-                        <div class="product-body">
-                            <p class="product-type">Category: ${safeCategory}</p>
-                            <h3 class="product-title">
-                                <a href="${safeProductUrl}">${safeTitle}</a>
-                            </h3>
-                            <p class="product-name">Subcategory: ${safeSubcategory}</p>
-                            <p class="product-desc">${safeDescription}</p>
-                        </div>
-                    </article>
+                    <a class="product-card product-card-link" href="${safeProductUrl}">
+                        <article>
+                            <div class="product-media">
+                                <img src="${safeImageUrl}" alt="${safeTitle}">
+                            </div>
+                            <div class="product-body">
+                                <p class="product-type">Category: ${safeCategory}</p>
+                                <h3 class="product-title">${safeTitle}</h3>
+                                <p class="product-name">Subcategory: ${safeSubcategory}</p>
+                                <p class="product-name">Grandchild: ${safeGrandchild}</p>
+                                <p class="product-desc">${safeDescription}</p>
+                            </div>
+                        </article>
+                    </a>
                 `;
             }
 
@@ -204,11 +221,11 @@
 
                 params.delete('category_id');
                 params.delete('subcategory_id');
-                params.delete('search');
+                params.delete('grandchild_id');
 
                 if (currentCategoryId) params.set('category_id', currentCategoryId);
                 if (currentSubcategoryId) params.set('subcategory_id', currentSubcategoryId);
-                if (currentSearch) params.set('search', currentSearch);
+                if (currentGrandchildId) params.set('grandchild_id', currentGrandchildId);
 
                 history.replaceState({}, '', `${url.pathname}${params.toString() ? `?${params.toString()}` : ''}`);
             }
@@ -220,7 +237,7 @@
 
                     if (currentCategoryId) params.set('category_id', currentCategoryId);
                     if (currentSubcategoryId) params.set('subcategory_id', currentSubcategoryId);
-                    if (currentSearch) params.set('search', currentSearch);
+                    if (currentGrandchildId) params.set('grandchild_id', currentGrandchildId);
 
                     const response = await fetch(`${fetchUrl}?${params.toString()}`, {
                         headers: {
@@ -239,10 +256,9 @@
                     const selected = data.selected || {};
                     currentCategoryId = selected.category_id ? String(selected.category_id) : '';
                     currentSubcategoryId = selected.subcategory_id ? String(selected.subcategory_id) : '';
-                    currentSearch = selected.search || '';
+                    currentGrandchildId = selected.grandchild_id ? String(selected.grandchild_id) : '';
 
-                    searchInput.value = currentSearch;
-                    renderSubcategories(currentCategoryId, currentSubcategoryId);
+                    renderSubcategoryTree(currentCategoryId, currentSubcategoryId, currentGrandchildId);
                     syncUrl();
                 } catch (err) {
                     errorBox.textContent = 'Failed to update products. Please try again.';
@@ -254,42 +270,39 @@
                 if (!event.target.classList.contains('category-check')) return;
                 currentCategoryId = event.target.value;
                 currentSubcategoryId = '';
-                renderSubcategories(currentCategoryId);
+                currentGrandchildId = '';
+                renderSubcategoryTree(currentCategoryId);
                 fetchProducts();
             });
 
             subcategoryGroup.addEventListener('change', (event) => {
-                if (!event.target.classList.contains('subcategory-check')) return;
-                currentSubcategoryId = event.target.value;
-                fetchProducts();
-            });
+                if (event.target.classList.contains('subcategory-check')) {
+                    currentSubcategoryId = event.target.value;
+                    currentGrandchildId = '';
+                    renderSubcategoryTree(currentCategoryId, currentSubcategoryId, currentGrandchildId);
+                    fetchProducts();
+                    return;
+                }
 
-            searchBtn.addEventListener('click', () => {
-                currentSearch = searchInput.value.trim();
-                fetchProducts();
-            });
-
-            searchInput.addEventListener('keydown', (event) => {
-                if (event.key !== 'Enter') return;
-                event.preventDefault();
-                currentSearch = searchInput.value.trim();
-                fetchProducts();
+                if (event.target.classList.contains('grandchild-check')) {
+                    currentGrandchildId = event.target.value;
+                    fetchProducts();
+                }
             });
 
             clearBtn.addEventListener('click', () => {
                 currentCategoryId = '';
                 currentSubcategoryId = '';
-                currentSearch = '';
+                currentGrandchildId = '';
 
                 const allCategoriesOption = categoryGroup.querySelector('input[value=""]');
                 if (allCategoriesOption) allCategoriesOption.checked = true;
 
-                searchInput.value = '';
-                renderSubcategories('');
+                renderSubcategoryTree('');
                 fetchProducts();
             });
 
-            renderSubcategories(currentCategoryId, currentSubcategoryId);
+            renderSubcategoryTree(currentCategoryId, currentSubcategoryId, currentGrandchildId);
             fetchProducts();
         })();
     </script>

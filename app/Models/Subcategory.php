@@ -20,6 +20,11 @@ class Subcategory extends Model
         return $this->hasMany(Product::class);
     }
 
+    public function grandchilds(): HasMany
+    {
+        return $this->hasMany(Grandchild::class);
+    }
+
     public function specGroups(): HasMany
     {
         return $this->hasMany(SpecGroup::class);

@@ -74,7 +74,8 @@
                                         <th>ID</th>
                                         <th>Image</th>
                                         <th>Title</th>
-                                        <th>Type</th>
+                                        <th>Subcategory</th>
+                                        <th>Grandchild</th>
                                         <th>Status</th>
                                         <th>Date/Time</th>
                                         <th>Control</th>
@@ -109,11 +110,11 @@
                                                 <td>{{ isset($product->title) ? Str::limit($product->title, 30) : '----' }}
                                                 </td>
 
-                                                {{-- Type --}}
+                                                {{-- Subcategory --}}
                                                 <td>{{ $product->subcategory->name ?? '----' }}</td>
 
-                                                {{-- Title --}}
-
+                                                {{-- Grandchild --}}
+                                                <td>{{ $product->grandchild->name ?? '----' }}</td>
 
                                                 {{-- Status --}}
                                                 <td>

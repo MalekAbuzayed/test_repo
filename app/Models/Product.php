@@ -11,6 +11,7 @@ class Product extends Model
     protected $fillable = [
         'category_id',
         'subcategory_id',
+        'grandchild_id',
         'title',
         'description',
         'status',
@@ -33,6 +34,11 @@ class Product extends Model
     public function subcategory(): BelongsTo
     {
         return $this->belongsTo(Subcategory::class);
+    }
+
+    public function grandchild(): BelongsTo
+    {
+        return $this->belongsTo(Grandchild::class);
     }
 
     public function files(): HasMany

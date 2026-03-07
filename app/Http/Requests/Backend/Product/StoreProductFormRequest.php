@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Backend\Product;
 
+use App\Models\Grandchild;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class StoreProductFormRequest extends FormRequest
 {
@@ -18,6 +20,7 @@ class StoreProductFormRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'status' => ['required', 'in:1,2'],
             'subcategory_id' => ['required', 'exists:subcategories,id'],
+            'grandchild_id' => ['nullable', 'exists:grandchilds,id'],
 
             // images (2MB)
             'images' => ['nullable', 'array'],
@@ -46,7 +49,42 @@ class StoreProductFormRequest extends FormRequest
     {
         return [
             'subcategory_id.required' => 'The product type field is required.',
-
+            'grandchild_id.required' => 'The grandchild field is required.',
+            'grandchild_id.exists' => 'The selected grandchild is invalid.',
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $subcategoryId = $this->input('subcategory_id');
+            $grandchildId = $this->input('grandchild_id');
+
+            if (!$subcategoryId) {
+                return;
+            }
+
+            $subcategoryHasGrandchilds = Grandchild::query()
+                ->where('subcategory_id', $subcategoryId)
+                ->exists();
+
+            if ($subcategoryHasGrandchilds && !$grandchildId) {
+                $validator->errors()->add('grandchild_id', 'The grandchild field is required for the selected subcategory.');
+                return;
+            }
+
+            if (!$grandchildId) {
+                return;
+            }
+
+            $belongsToSubcategory = Grandchild::query()
+                ->where('id', $grandchildId)
+                ->where('subcategory_id', $subcategoryId)
+                ->exists();
+
+            if (!$belongsToSubcategory) {
+                $validator->errors()->add('grandchild_id', 'The selected grandchild must belong to the selected subcategory.');
+            }
+        });
     }
 }

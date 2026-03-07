@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Grandchild extends Model
 {
+    protected $table = 'grandchilds';
+
     protected $fillable = ['subcategory_id', 'name', 'status'];
 
     public function subcategory(): BelongsTo

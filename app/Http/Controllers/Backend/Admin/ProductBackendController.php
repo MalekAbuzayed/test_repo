@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Admin;
 use App\Models\Product;
 use App\Models\Specification;
 use App\Models\Category;
+use App\Models\Grandchild;
 use App\Models\ProductFile;
 use App\Models\ProductSpecValue;
 use App\Models\Subcategory;
@@ -34,6 +35,7 @@ class ProductBackendController extends Controller
                 ->with([
                     'category:id,name',
                     'subcategory:id,name',
+                    'grandchild:id,name,subcategory_id',
                     // load only primary image (or first image) for table thumbnail
                     'files' => fn($q) => $q->where('type', 'image')->orderByDesc('is_primary')->orderBy('sort_order'),
                 ])
@@ -74,7 +76,7 @@ class ProductBackendController extends Controller
             // get the next autoincrement id :
             $statement = DB::select("SHOW TABLE STATUS LIKE 'products'");
             $nextId = $statement[0]->Auto_increment;
-            $subcategories = Subcategory::orderBy('name')->get();
+            $subcategories = $this->adminSubcategoriesTree();
 
             return view('admin.products.create', compact(['nextId', 'subcategories']));
         } catch (\Throwable $th) {
@@ -111,16 +113,24 @@ class ProductBackendController extends Controller
     {
 
         try {
+            $subcategory = Subcategory::query()
+                ->with('category')
+                ->findOrFail($request->subcategory_id);
 
+            $grandchild = $request->filled('grandchild_id')
+                ? Grandchild::query()
+                    ->with('subcategory.category')
+                    ->findOrFail($request->grandchild_id)
+                : null;
 
-            $subcategory = Subcategory::with('category')->findOrFail($request->subcategory_id);
-
-            DB::transaction(function () use ($request, $subcategory) {
+            DB::transaction(function () use ($request, $subcategory, $grandchild) {
+                $resolvedSubcategory = $grandchild?->subcategory ?? $subcategory;
 
                 // 1) Create product
                 $product = Product::create([
-                    'category_id' => $subcategory->category_id,
-                    'subcategory_id' => $subcategory->id,
+                    'category_id' => $resolvedSubcategory->category_id,
+                    'subcategory_id' => $resolvedSubcategory->id,
+                    'grandchild_id' => $grandchild?->id,
                     'title' => $request->title,
                     'description' => $request->description,
                     'status' => $request->status,
@@ -251,6 +261,7 @@ class ProductBackendController extends Controller
             $product = Product::with([
                 'category:id,name',
                 'subcategory:id,name',
+                'grandchild:id,name,subcategory_id',
                 'files' => fn($q) => $q->orderByDesc('is_primary')->orderBy('sort_order'),
                 'specValues:id,product_id,spec_field_id,value_text',
             ])->find($id);
@@ -293,16 +304,17 @@ class ProductBackendController extends Controller
             $product = Product::with([
                 'files' => fn($q) => $q->orderByDesc('is_primary')->orderBy('sort_order'),
                 'specValues:id,product_id,spec_field_id,value_text',
-                'subcategory:id,name',
+                'subcategory:id,name,category_id',
                 'category:id,name',
+                'grandchild:id,name,subcategory_id',
             ])->find($id);
 
             if (!$product) {
                 return redirect()->route('super_admin.products-index')->with('danger', 'This data is not in the records');
             }
 
-            $subcategories = Subcategory::orderBy('name')->get();
-            $existingSpecValues = $product->specValues->pluck('value_text', 'spec_field_id');
+            $subcategories = $this->adminSubcategoriesTree();
+            $existingSpecValues = old('spec_values', $product->specValues->pluck('value_text', 'spec_field_id')->toArray());
 
             return view('admin.products.edit', compact('product', 'subcategories', 'existingSpecValues'));
         } catch (\Throwable $th) {
@@ -323,14 +335,24 @@ class ProductBackendController extends Controller
                 return redirect()->route('super_admin.products-index')->with('danger', 'Record Not Found');
             }
 
-            $subcategory = Subcategory::findOrFail($request->subcategory_id);
+            $subcategory = Subcategory::query()
+                ->with('category')
+                ->findOrFail($request->subcategory_id);
 
-            DB::transaction(function () use ($request, $product, $subcategory) {
+            $grandchild = $request->filled('grandchild_id')
+                ? Grandchild::query()
+                    ->with('subcategory.category')
+                    ->findOrFail($request->grandchild_id)
+                : null;
+
+            DB::transaction(function () use ($request, $product, $subcategory, $grandchild) {
+                $resolvedSubcategory = $grandchild?->subcategory ?? $subcategory;
 
                 // 1) Update product base data
                 $product->update([
-                    'category_id' => $subcategory->category_id,
-                    'subcategory_id' => $subcategory->id,
+                    'category_id' => $resolvedSubcategory->category_id,
+                    'subcategory_id' => $resolvedSubcategory->id,
+                    'grandchild_id' => $grandchild?->id,
                     'title' => $request->title,
                     'description' => $request->description,
                     'status' => $request->status,
@@ -805,5 +827,28 @@ class ProductBackendController extends Controller
 
             return view('errors.support_tickets', compact('th', 'function_name', 'end_error_ticket'));
         }
+    }
+
+    private function adminSubcategoriesTree()
+    {
+        return Subcategory::query()
+            ->with([
+                'category:id,name',
+                'grandchilds' => function ($query) {
+                    $query->where($this->activeStatusCondition())->orderBy('name');
+                },
+            ])
+            ->where($this->activeStatusCondition())
+            ->orderBy('name')
+            ->get(['id', 'name', 'category_id']);
+    }
+
+    private function activeStatusCondition(): \Closure
+    {
+        return function ($q) {
+            $q->where('status', 1)
+                ->orWhere('status', '1')
+                ->orWhereRaw('LOWER(status) = ?', ['active']);
+        };
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Grandchild;
 use App\Models\Product;
 use App\Models\ProductFile;
 use App\Models\Subcategory;
@@ -20,14 +21,14 @@ class ProductController extends Controller
         $selected = $this->resolveSelectedFilters(
             $request->query('category_id'),
             $request->query('subcategory_id'),
-            $request->query('search')
+            $request->query('grandchild_id')
         );
 
         $products = $this->applyProductFilters(
             $this->baseProductsQuery(),
             $selected['category_id'],
             $selected['subcategory_id'],
-            $selected['search']
+            $selected['grandchild_id']
         )->get();
 
         $categories = $this->activeCategoriesTree();
@@ -40,17 +41,18 @@ class ProductController extends Controller
         $selected = $this->resolveSelectedFilters(
             $request->query('category_id'),
             $request->query('subcategory_id'),
-            $request->query('search')
+            $request->query('grandchild_id')
         );
 
         $products = $this->applyProductFilters(
             $this->baseProductsQuery(),
             $selected['category_id'],
             $selected['subcategory_id'],
-            $selected['search']
+            $selected['grandchild_id']
         )->get();
 
         $subcategories = collect();
+        $grandchilds = collect();
         if (!empty($selected['category_id'])) {
             $subcategories = Subcategory::query()
                 ->where('category_id', $selected['category_id'])
@@ -59,11 +61,20 @@ class ProductController extends Controller
                 ->get(['id', 'name', 'category_id']);
         }
 
+        if (!empty($selected['subcategory_id'])) {
+            $grandchilds = Grandchild::query()
+                ->where('subcategory_id', $selected['subcategory_id'])
+                ->where($this->activeStatusCondition())
+                ->orderBy('name')
+                ->get(['id', 'name', 'subcategory_id']);
+        }
+
         return response()->json([
             'products' => $products->map(fn(Product $product) => $this->serializeProductCard($product))->values(),
             'count' => $products->count(),
             'selected' => $selected,
             'subcategories' => $subcategories->values(),
+            'grandchilds' => $grandchilds->values(),
         ]);
     }
 
@@ -231,6 +242,7 @@ class ProductController extends Controller
             ->with([
                 'category:id,name',
                 'subcategory:id,name,category_id',
+                'grandchild:id,name,subcategory_id',
                 'files' => function ($q) {
                     $q->select('id', 'product_id', 'type', 'path', 'is_primary', 'sort_order')
                         ->where('type', 'image')
@@ -242,7 +254,7 @@ class ProductController extends Controller
             ->orderBy('created_at', 'desc');
     }
 
-    private function applyProductFilters(Builder $query, ?int $categoryId, ?int $subcategoryId, ?string $search): Builder
+    private function applyProductFilters(Builder $query, ?int $categoryId, ?int $subcategoryId, ?int $grandchildId): Builder
     {
         if (!empty($categoryId)) {
             $query->where('category_id', $categoryId);
@@ -252,11 +264,8 @@ class ProductController extends Controller
             $query->where('subcategory_id', $subcategoryId);
         }
 
-        if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                    ->orWhere('description', 'like', '%' . $search . '%');
-            });
+        if (!empty($grandchildId)) {
+            $query->where('grandchild_id', $grandchildId);
         }
 
         return $query;
@@ -268,19 +277,56 @@ class ProductController extends Controller
             ->where($this->activeStatusCondition())
             ->with([
                 'subcategories' => function ($q) {
-                    $q->where($this->activeStatusCondition())->orderBy('name');
+                    $q->where($this->activeStatusCondition())
+                        ->with([
+                            'grandchilds' => function ($grandchildQuery) {
+                                $grandchildQuery->where($this->activeStatusCondition())->orderBy('name');
+                            },
+                        ])
+                        ->orderBy('name');
                 },
             ])
             ->orderBy('name')
             ->get(['id', 'name']);
     }
 
-    private function resolveSelectedFilters($categoryInput, $subcategoryInput, $searchInput): array
+    private function resolveSelectedFilters($categoryInput, $subcategoryInput, $grandchildInput): array
     {
         $categoryId = $this->normalizeId($categoryInput);
         $subcategoryId = $this->normalizeId($subcategoryInput);
-        $search = trim((string) ($searchInput ?? ''));
-        $search = $search === '' ? null : $search;
+        $grandchildId = $this->normalizeId($grandchildInput);
+
+        if (!empty($grandchildId)) {
+            $grandchild = Grandchild::query()
+                ->where('id', $grandchildId)
+                ->where($this->activeStatusCondition())
+                ->with([
+                    'subcategory' => function ($query) {
+                        $query->select('id', 'category_id');
+                    },
+                ])
+                ->first(['id', 'subcategory_id']);
+
+            if (!$grandchild || !$grandchild->subcategory) {
+                $grandchildId = null;
+            } else {
+                $subcategoryId = (int) $grandchild->subcategory_id;
+                $categoryId = (int) $grandchild->subcategory->category_id;
+            }
+        }
+
+        if (!empty($subcategoryId) && empty($grandchildId)) {
+            $subcategory = Subcategory::query()
+                ->where('id', $subcategoryId)
+                ->where($this->activeStatusCondition())
+                ->first(['id', 'category_id']);
+
+            if (!$subcategory) {
+                $subcategoryId = null;
+            } else {
+                $categoryId = (int) $subcategory->category_id;
+            }
+        }
 
         if (!empty($categoryId)) {
             $categoryExists = Category::query()
@@ -290,30 +336,40 @@ class ProductController extends Controller
 
             if (!$categoryExists) {
                 $categoryId = null;
+                $subcategoryId = null;
+                $grandchildId = null;
             }
         }
 
-        if (!empty($subcategoryId)) {
-            $subcategory = Subcategory::query()
+        if (!empty($subcategoryId) && !empty($categoryId)) {
+            $subcategoryMatchesCategory = Subcategory::query()
                 ->where('id', $subcategoryId)
+                ->where('category_id', $categoryId)
                 ->where($this->activeStatusCondition())
-                ->first(['id', 'category_id']);
+                ->exists();
 
-            if (!$subcategory) {
+            if (!$subcategoryMatchesCategory) {
                 $subcategoryId = null;
-            } else {
-                if (!empty($categoryId) && (int) $subcategory->category_id !== (int) $categoryId) {
-                    $subcategoryId = null;
-                } elseif (empty($categoryId)) {
-                    $categoryId = (int) $subcategory->category_id;
-                }
+                $grandchildId = null;
+            }
+        }
+
+        if (!empty($grandchildId) && !empty($subcategoryId)) {
+            $grandchildMatchesSubcategory = Grandchild::query()
+                ->where('id', $grandchildId)
+                ->where('subcategory_id', $subcategoryId)
+                ->where($this->activeStatusCondition())
+                ->exists();
+
+            if (!$grandchildMatchesSubcategory) {
+                $grandchildId = null;
             }
         }
 
         return [
             'category_id' => $categoryId,
             'subcategory_id' => $subcategoryId,
-            'search' => $search,
+            'grandchild_id' => $grandchildId,
         ];
     }
 
@@ -325,6 +381,7 @@ class ProductController extends Controller
             ->with([
                 'category:id,name',
                 'subcategory:id,name,category_id',
+                'grandchild:id,name,subcategory_id',
                 'files' => function ($q) {
                     $q->where($this->activeStatusCondition())
                         ->orderByRaw("CASE WHEN type = 'image' THEN 0 ELSE 1 END")
@@ -527,6 +584,7 @@ class ProductController extends Controller
             'description' => $product->description,
             'category_name' => $product->category?->name,
             'subcategory_name' => $product->subcategory?->name,
+            'grandchild_name' => $product->grandchild?->name,
             'image_url' => $imageUrl,
             'product_url' => route('product', ['id' => $product->id]),
         ];
