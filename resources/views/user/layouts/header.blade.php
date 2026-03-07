@@ -45,7 +45,7 @@
                         </div>
                     </div>
                 </div>
-                <a class="nav-link" href="{{ route('index') }}#clients">Download Center</a>
+                <a class="nav-link" href="{{ route('download.center') }}">Download Center</a>
                 <a class="nav-link" href="{{ route('faq') }}">FAQ</a>
                 <a class="nav-link" href="{{ route('contact_us') }}">Contact Us</a>
             </nav>

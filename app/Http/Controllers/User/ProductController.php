@@ -78,6 +78,94 @@ class ProductController extends Controller
         ]);
     }
 
+    public function downloadCenter()
+    {
+        return view('user.products.download-center');
+    }
+
+    public function downloadCenterOptions(Request $request)
+    {
+        $selected = $this->resolveDownloadCenterSelection(
+            $request->query('category_id'),
+            $request->query('subcategory_id'),
+            $request->query('grandchild_id'),
+            $request->query('product_id'),
+            $request->query('file_type')
+        );
+
+        $categories = $this->activeCategoriesTree()
+            ->map(fn(Category $category) => [
+                'id' => $category->id,
+                'name' => $category->name,
+            ])
+            ->values();
+
+        $subcategories = collect();
+        if (!empty($selected['category_id'])) {
+            $subcategories = Subcategory::query()
+                ->where('category_id', $selected['category_id'])
+                ->where($this->activeStatusCondition())
+                ->orderBy('name')
+                ->get(['id', 'name']);
+        }
+
+        $grandchilds = collect();
+        $grandchildSelectionRequired = false;
+        if (!empty($selected['subcategory_id'])) {
+            $grandchilds = Grandchild::query()
+                ->where('subcategory_id', $selected['subcategory_id'])
+                ->where($this->activeStatusCondition())
+                ->orderBy('name')
+                ->get(['id', 'name']);
+            $grandchildSelectionRequired = $grandchilds->isNotEmpty();
+        }
+
+        $products = collect();
+        $shouldLoadProducts = !empty($selected['subcategory_id']) &&
+            (!$grandchildSelectionRequired || !empty($selected['grandchild_id']));
+
+        if ($shouldLoadProducts) {
+            $products = $this->activeProductsForDownloadCenter(
+                $selected['category_id'],
+                $selected['subcategory_id'],
+                $selected['grandchild_id']
+            )->map(fn(Product $product) => [
+                'id' => $product->id,
+                'name' => $product->title,
+            ])->values();
+        }
+
+        $fileTypes = [];
+        $files = [];
+        $downloadAllUrl = null;
+
+        if (!empty($selected['product_id'])) {
+            $fileTypes = $this->buildDownloadTypeOptions($selected['product']);
+            $files = $this->buildDownloadFilesForSelection($selected['product'], $selected['file_type']);
+            $downloadAllUrl = count($this->buildDownloadFilesForSelection($selected['product'], '__all__')) > 0
+                ? route('product.files.downloadAll', ['id' => $selected['product']->id])
+                : null;
+        }
+
+        return response()->json([
+            'selected' => [
+                'category_id' => $selected['category_id'],
+                'subcategory_id' => $selected['subcategory_id'],
+                'grandchild_id' => $selected['grandchild_id'],
+                'product_id' => $selected['product_id'],
+                'file_type' => $selected['file_type'],
+            ],
+            'categories' => $categories,
+            'subcategories' => $subcategories->values(),
+            'grandchilds' => $grandchilds->values(),
+            'grandchild_selection_required' => $grandchildSelectionRequired,
+            'products' => $products,
+            'file_types' => $fileTypes,
+            'files' => $files,
+            'download_all_url' => $downloadAllUrl,
+        ]);
+    }
+
     public function show(Request $request, $id = null)
     {
         $product = $this->resolveProductFromRequest($request, $id);
@@ -490,17 +578,13 @@ class ProductController extends Controller
 
     private function buildDownloadFilesByType(Product $product): array
     {
-        $files = $product->files
-            ->where('type', '!=', 'image')
-            ->filter(fn(ProductFile $file) => $this->isActiveStatusValue($file->getRawOriginal('status')))
-            ->sortBy(fn(ProductFile $file) => [(string) $file->type, (int) ($file->sort_order ?? 999999), (int) $file->id])
-            ->values();
+        $files = $this->activeDownloadFilesCollection($product);
 
         $grouped = [];
 
         foreach ($files as $file) {
             $type = (string) $file->type;
-            $label = ucwords(str_replace('_', ' ', $type));
+            $label = $this->humanizeFileType($type);
 
             if (!isset($grouped[$type])) {
                 $grouped[$type] = [
@@ -521,6 +605,151 @@ class ProductController extends Controller
 
         ksort($grouped);
         return $grouped;
+    }
+
+    private function activeProductsForDownloadCenter(?int $categoryId, ?int $subcategoryId, ?int $grandchildId)
+    {
+        return $this->applyProductFilters(
+            Product::query()->where($this->activeStatusCondition())->orderBy('title'),
+            $categoryId,
+            $subcategoryId,
+            $grandchildId
+        )->get(['id', 'title']);
+    }
+
+    private function resolveDownloadCenterSelection(
+        $categoryInput,
+        $subcategoryInput,
+        $grandchildInput,
+        $productInput,
+        $fileTypeInput
+    ): array {
+        $selected = $this->resolveSelectedFilters($categoryInput, $subcategoryInput, $grandchildInput);
+        $productId = $this->normalizeId($productInput);
+        $product = null;
+
+        $grandchildSelectionRequired = false;
+        if (!empty($selected['subcategory_id'])) {
+            $grandchildSelectionRequired = Grandchild::query()
+                ->where('subcategory_id', $selected['subcategory_id'])
+                ->where($this->activeStatusCondition())
+                ->exists();
+        }
+
+        if ($grandchildSelectionRequired && empty($selected['grandchild_id'])) {
+            $productId = null;
+        }
+
+        if (!empty($productId)) {
+            $product = Product::query()
+                ->where('id', $productId)
+                ->where($this->activeStatusCondition())
+                ->first(['id', 'category_id', 'subcategory_id', 'grandchild_id', 'title']);
+
+            if (
+                !$product ||
+                (!empty($selected['category_id']) && (int) $product->category_id !== (int) $selected['category_id']) ||
+                (!empty($selected['subcategory_id']) && (int) $product->subcategory_id !== (int) $selected['subcategory_id']) ||
+                (
+                    !empty($selected['grandchild_id'])
+                    ? (int) $product->grandchild_id !== (int) $selected['grandchild_id']
+                    : ($grandchildSelectionRequired && !is_null($product->grandchild_id))
+                )
+            ) {
+                $product = null;
+                $productId = null;
+            }
+        }
+
+        $fileType = is_string($fileTypeInput) ? trim($fileTypeInput) : '';
+        if ($fileType === '') {
+            $fileType = null;
+        }
+
+        if ($product && $fileType) {
+            $availableTypes = collect($this->buildDownloadTypeOptions($product))->pluck('id')->all();
+            if (!in_array($fileType, $availableTypes, true)) {
+                $fileType = null;
+            }
+        } else {
+            $fileType = null;
+        }
+
+        return [
+            'category_id' => $selected['category_id'],
+            'subcategory_id' => $selected['subcategory_id'],
+            'grandchild_id' => $selected['grandchild_id'],
+            'product_id' => $productId,
+            'product' => $product,
+            'file_type' => $fileType,
+        ];
+    }
+
+    private function buildDownloadTypeOptions(Product $product): array
+    {
+        $filesByType = $this->buildDownloadFilesByType($product);
+
+        if (empty($filesByType)) {
+            return [];
+        }
+
+        return array_values(array_merge(
+            [[
+                'id' => '__all__',
+                'name' => 'All Files',
+            ]],
+            array_map(fn(array $typeBlock) => [
+                'id' => $typeBlock['type'],
+                'name' => $typeBlock['label'],
+            ], array_values($filesByType))
+        ));
+    }
+
+    private function buildDownloadFilesForSelection(Product $product, ?string $fileType): array
+    {
+        if (!$fileType) {
+            return [];
+        }
+
+        if ($fileType === '__all__') {
+            return array_values(array_map(function (array $typeBlock) {
+                return [
+                    'type' => $typeBlock['type'],
+                    'label' => $typeBlock['label'],
+                    'files' => $typeBlock['files'],
+                ];
+            }, array_values($this->buildDownloadFilesByType($product))));
+        }
+
+        $filesByType = $this->buildDownloadFilesByType($product);
+        return $filesByType[$fileType]['files'] ?? [];
+    }
+
+    private function activeDownloadFilesCollection(Product $product)
+    {
+        return $product->files
+            ->where('type', '!=', 'image')
+            ->filter(fn(ProductFile $file) => $this->isActiveStatusValue($file->getRawOriginal('status')))
+            ->sortBy(fn(ProductFile $file) => [(string) $file->type, (int) ($file->sort_order ?? 999999), (int) $file->id])
+            ->values();
+    }
+
+    private function serializeDownloadFiles(array $files): array
+    {
+        return array_map(function (ProductFile $file) {
+            return [
+                'id' => $file->id,
+                'title' => $file->title ?: basename($file->path),
+                'mime_type' => $file->mime_type,
+                'size_bytes' => (int) $file->size_bytes,
+                'download_url' => route('product.files.download', ['file' => $file->id, 'id' => $file->product_id]),
+            ];
+        }, $files);
+    }
+
+    private function humanizeFileType(string $type): string
+    {
+        return ucwords(str_replace('_', ' ', $type));
     }
 
     private function normalizeId($value): ?int

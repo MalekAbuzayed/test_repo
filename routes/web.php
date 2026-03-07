@@ -262,6 +262,8 @@ Route::get('/contact_us', [ContactUsController::class, 'index'])->name('contact_
 Route::get('/faq', [FAQController::class, 'index'])->name('faq');
 Route::get('/products', [ProductController::class, 'index'])->name('products');
 Route::get('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
+Route::get('/download-center', [ProductController::class, 'downloadCenter'])->name('download.center');
+Route::get('/download-center/options', [ProductController::class, 'downloadCenterOptions'])->name('download.center.options');
 Route::get('/product', [ProductController::class, 'show'])->name('product');
 Route::get('/product/specs/key', [ProductController::class, 'keySpecs'])->name('product.specs.key');
 Route::get('/product/specs/other', [ProductController::class, 'otherSpecs'])->name('product.specs.other');
