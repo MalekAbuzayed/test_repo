@@ -5,75 +5,93 @@
 @endsection
 
 @section('content')
-    @include('user.components.page-hero', [
-        'eyebrow' => 'CATALOG',
-        'title' => 'Products',
-        'subtitle' => 'Explore our latest products and technical specifications.',
-        'backgroundImage' =>
-            'https://images.unsplash.com/photo-1497440001374-f26997328c1b?q=80&w=2000&auto=format&fit=crop',
-    ])
-
-    <main class="section products-page" id="products">
-        <div class="container">
-            <div class="products-head reveal">
-                <div>
-                    <span class="eyebrow">PRODUCTS</span>
-                    <h2>Products Catalog</h2>
-                    <p class="subtext products-sub">
-                        Explore products by category and product family.
-                    </p>
-                </div>
-
-                <div class="products-head-right">
-                    <div class="results-pill" id="resultsCount">{{ $products->count() }} Products</div>
-                </div>
+    <div class="products-page-shell">
+        <header class="products-page-header">
+            <div class="products-page-header__inner">
+                <nav class="products-breadcrumb" aria-label="Breadcrumb">
+                    <a href="{{ route('index') }}">Home</a>
+                    <span>/</span>
+                    <span>Products</span>
+                </nav>
+                <p class="products-page-eyebrow">Catalog</p>
+                <h1 class="products-page-title">GoodWe <em>Products</em></h1>
+                <p class="products-page-subtitle">
+                    Explore route-aware product families and technical product lines for residential, commercial, and
+                    utility-scale solar deployments.
+                </p>
             </div>
+        </header>
 
-            <div class="products-layout reveal">
-                <aside class="products-filters" aria-label="Product filters">
-                    <div class="filter-card">
-                        <h3 class="filter-title">Categories</h3>
-                        <p class="filter-hint">Choose a category to narrow the catalog.</p>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-                        <div class="filter-group" id="categoryFilterGroup">
-                            <label class="filter-item">
-                                <input class="filter-check category-check" type="radio" name="category_id" value=""
-                                    @checked(empty($selected['category_id'])) />
-                                <span>All Categories</span>
-                            </label>
+        <main class="products-page-body" id="products">
+            <aside class="products-sidebar" id="productsSidebar" aria-label="Product filters">
+                <div class="filter-block">
+                    <div class="filter-header">
+                        <span class="filter-title">Browse by Category</span>
+                        <button type="button" class="sidebar-close" id="sidebarCloseBtn" aria-label="Close filters">
+                            <span></span><span></span>
+                        </button>
+                    </div>
 
-                            @foreach ($categories as $category)
-                                <label class="filter-item">
-                                    <input class="filter-check category-check" type="radio" name="category_id"
-                                        value="{{ $category->id }}" @checked((int) ($selected['category_id'] ?? 0) === (int) $category->id) />
-                                    <span>{{ $category->name }}</span>
-                                </label>
-                            @endforeach
+                    <div class="filter-body">
+                        <div class="filter-tree" id="filterTree"></div>
+                        <button type="button" class="clear-btn" id="clearFiltersBtn">Clear Selection</button>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="products-area" aria-label="Products list">
+                <div class="products-toolbar reveal">
+                    <div>
+                        <span class="products-count"><strong id="productCount">{{ $products->count() }}</strong> products
+                            found</span>
+                    </div>
+
+                    <div class="toolbar-right">
+                        <div class="view-toggle" aria-label="Layout switch">
+                            <button class="view-btn active" id="gridBtn" type="button" data-view="grid"
+                                aria-label="Grid view">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <rect x="3" y="3" width="7" height="7" />
+                                    <rect x="14" y="3" width="7" height="7" />
+                                    <rect x="3" y="14" width="7" height="7" />
+                                    <rect x="14" y="14" width="7" height="7" />
+                                </svg>
+                            </button>
+                            <button class="view-btn" id="listBtn" type="button" data-view="list"
+                                aria-label="List view">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="3" y1="6" x2="21" y2="6" />
+                                    <line x1="3" y1="12" x2="21" y2="12" />
+                                    <line x1="3" y1="18" x2="21" y2="18" />
+                                </svg>
+                            </button>
                         </div>
                     </div>
+                </div>
 
-                    <div class="filter-card">
-                        <h3 class="filter-title">Subcategories</h3>
-                        <p class="filter-hint">Pick a subcategory to reveal its related product families.</p>
+                <div class="active-filters reveal" id="activeTags"></div>
 
-                        <div class="filter-group" id="subcategoryFilterGroup"></div>
+                <div id="productsFetchError" class="products-fetch-error d-none"></div>
 
-                        <div class="filter-actions">
-                            <button type="button" class="btn btn-outline" id="clearFiltersBtn">Clear</button>
-                        </div>
-                    </div>
-                </aside>
+                <div class="product-grid reveal" id="productsGrid">
+                    @include('user.products.partials.cards', ['products' => $products])
+                </div>
+            </section>
+        </main>
 
-                <section class="products-main" aria-label="Products list">
-                    <div id="productsFetchError" class="text-danger small mb-2 d-none"></div>
-
-                    <div class="products-grid" id="productsGrid">
-                        @include('user.products.partials.cards', ['products' => $products])
-                    </div>
-                </section>
-            </div>
+        <div class="mobile-filter-bar">
+            <button class="mob-filter-btn" id="openSidebarBtn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="6" x2="20" y2="6" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                    <line x1="10" y1="18" x2="14" y2="18" />
+                </svg>
+                Filters
+            </button>
         </div>
-    </main>
+    </div>
 @endsection
 
 @section('scripts')
@@ -83,16 +101,23 @@
             const fetchUrl = @json(route('products.filter'));
             const selectedState = @json($selected);
 
-            const categoryGroup = document.getElementById('categoryFilterGroup');
-            const subcategoryGroup = document.getElementById('subcategoryFilterGroup');
+            const filterTree = document.getElementById('filterTree');
             const productsGrid = document.getElementById('productsGrid');
-            const resultsCount = document.getElementById('resultsCount');
+            const productCount = document.getElementById('productCount');
+            const activeTags = document.getElementById('activeTags');
             const clearBtn = document.getElementById('clearFiltersBtn');
             const errorBox = document.getElementById('productsFetchError');
+            const productsSidebar = document.getElementById('productsSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const openSidebarBtn = document.getElementById('openSidebarBtn');
+            const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+            const gridBtn = document.getElementById('gridBtn');
+            const listBtn = document.getElementById('listBtn');
 
             let currentCategoryId = selectedState.category_id ? String(selectedState.category_id) : '';
             let currentSubcategoryId = selectedState.subcategory_id ? String(selectedState.subcategory_id) : '';
             let currentGrandchildId = selectedState.grandchild_id ? String(selectedState.grandchild_id) : '';
+            let currentView = 'grid';
 
             function esc(value) {
                 return String(value ?? '').replace(/[&<>"']/g, (char) => ({
@@ -102,117 +127,6 @@
                     '"': '&quot;',
                     "'": '&#39;',
                 } [char]));
-            }
-
-            function getSubcategoriesByCategory(categoryId) {
-                if (!categoryId) return [];
-                const category = categories.find((item) => String(item.id) === String(categoryId));
-                return category && Array.isArray(category.subcategories) ? category.subcategories : [];
-            }
-
-            function renderSubcategoryTree(categoryId, selectedSubcategoryId = '', selectedGrandchildId = '') {
-                const subcategories = getSubcategoriesByCategory(categoryId);
-
-                let html = `
-                    <label class="filter-item">
-                        <input class="filter-check subcategory-check" type="radio" name="subcategory_id" value="" ${selectedSubcategoryId ? '' : 'checked'}>
-                        <span>All Subcategories</span>
-                    </label>
-                `;
-
-                if (!categoryId) {
-                    html += `<span class="filter-empty">Choose a category to browse subcategories.</span>`;
-                    subcategoryGroup.innerHTML = html;
-                    return;
-                }
-
-                if (!subcategories.length) {
-                    html += `<span class="filter-empty">No subcategories available.</span>`;
-                    subcategoryGroup.innerHTML = html;
-                    return;
-                }
-
-                html += `<ul class="subcategory-tree">`;
-
-                subcategories.forEach((subcategory) => {
-                    const isActive = String(selectedSubcategoryId) === String(subcategory.id);
-                    const grandchilds = Array.isArray(subcategory.grandchilds) ? subcategory.grandchilds : [];
-                    let grandchildHtml = '';
-
-                    if (grandchilds.length) {
-                        grandchildHtml = grandchilds.map((grandchild) => {
-                            const checked = String(selectedGrandchildId) === String(grandchild.id) ? 'checked' : '';
-                            const activeClass = checked ? ' is-active' : '';
-
-                            return `
-                                <li class="grandchild-item">
-                                    <label class="grandchild-option${activeClass}">
-                                        <input class="filter-check grandchild-check" type="radio" name="grandchild_id" value="${esc(grandchild.id)}" ${checked}>
-                                        <span>${esc(grandchild.name)}</span>
-                                    </label>
-                                </li>
-                            `;
-                        }).join('');
-                    } else {
-                        grandchildHtml = `<li class="grandchild-item grandchild-item--empty"><span class="filter-empty">No related items.</span></li>`;
-                    }
-
-                    html += `
-                        <li class="subcategory-node">
-                            <label class="subcategory-option${isActive ? ' is-active' : ''}">
-                                <input class="filter-check subcategory-check" type="radio" name="subcategory_id" value="${esc(subcategory.id)}" ${isActive ? 'checked' : ''}>
-                                <span>${esc(subcategory.name)}</span>
-                            </label>
-                            <div class="grandchild-wrap${isActive ? ' is-open' : ''}">
-                                <ul class="grandchild-list">
-                                    ${grandchildHtml}
-                                </ul>
-                            </div>
-                        </li>
-                    `;
-                });
-
-                html += `</ul>`;
-                subcategoryGroup.innerHTML = html;
-            }
-
-            function productCardTemplate(product) {
-                const imageUrl = product.image_url || `https://picsum.photos/seed/product-${product.id}/900/650`;
-                const safeTitle = esc(product.title || '');
-                const rawDescription = String(product.description || '');
-                const safeDescription = esc(rawDescription.length > 140 ? `${rawDescription.slice(0, 140)}...` :
-                    rawDescription);
-                const safeCategory = esc(product.category_name || 'N/A');
-                const safeSubcategory = esc(product.subcategory_name || 'N/A');
-                const safeGrandchild = esc(product.grandchild_name || 'N/A');
-                const safeProductUrl = esc(product.product_url || '#');
-                const safeImageUrl = esc(imageUrl);
-
-                return `
-                    <a class="product-card product-card-link" href="${safeProductUrl}">
-                        <article>
-                            <div class="product-media">
-                                <img src="${safeImageUrl}" alt="${safeTitle}">
-                            </div>
-                            <div class="product-body">
-                                <p class="product-type">Category: ${safeCategory}</p>
-                                <h3 class="product-title">${safeTitle}</h3>
-                                <p class="product-name">Subcategory: ${safeSubcategory}</p>
-                                <p class="product-name">Grandchild: ${safeGrandchild}</p>
-                                <p class="product-desc">${safeDescription}</p>
-                            </div>
-                        </article>
-                    </a>
-                `;
-            }
-
-            function renderProducts(products) {
-                if (!products.length) {
-                    productsGrid.innerHTML = `<div class="col-12 text-muted">No products found.</div>`;
-                    return;
-                }
-
-                productsGrid.innerHTML = products.map(productCardTemplate).join('');
             }
 
             function syncUrl() {
@@ -230,6 +144,188 @@
                 history.replaceState({}, '', `${url.pathname}${params.toString() ? `?${params.toString()}` : ''}`);
             }
 
+            function setView(view) {
+                currentView = view;
+                productsGrid.classList.toggle('list-view', view === 'list');
+                gridBtn.classList.toggle('active', view === 'grid');
+                listBtn.classList.toggle('active', view === 'list');
+            }
+
+            function getSelectedCategory() {
+                return categories.find((item) => String(item.id) === currentCategoryId) || null;
+            }
+
+            function getSelectedSubcategory() {
+                const category = getSelectedCategory();
+                if (!category || !Array.isArray(category.subcategories)) return null;
+                return category.subcategories.find((item) => String(item.id) === currentSubcategoryId) || null;
+            }
+
+            function renderActiveTags() {
+                const tags = [];
+                const category = getSelectedCategory();
+                const subcategory = getSelectedSubcategory();
+                const grandchild = subcategory && Array.isArray(subcategory.grandchilds)
+                    ? subcategory.grandchilds.find((item) => String(item.id) === currentGrandchildId) || null
+                    : null;
+
+                if (category) {
+                    tags.push({
+                        level: 'category',
+                        label: category.name,
+                    });
+                }
+
+                if (subcategory) {
+                    tags.push({
+                        level: 'subcategory',
+                        label: subcategory.name,
+                    });
+                }
+
+                if (grandchild) {
+                    tags.push({
+                        level: 'grandchild',
+                        label: grandchild.name,
+                    });
+                }
+
+                if (!tags.length) {
+                    activeTags.innerHTML = '';
+                    activeTags.classList.add('is-empty');
+                    return;
+                }
+
+                activeTags.classList.remove('is-empty');
+                activeTags.innerHTML = tags.map((tag) => `
+                    <button class="filter-tag" type="button" data-clear-level="${tag.level}">
+                        ${esc(tag.label)}
+                        <span class="tag-x" aria-hidden="true">&times;</span>
+                    </button>
+                `).join('');
+            }
+
+            function renderFilterTree() {
+                const html = `
+                    <ul class="cat-list">
+                        <li class="cat-item ${currentCategoryId === '' ? 'is-selected-root' : ''}">
+                            <button class="cat-row ${currentCategoryId === '' ? 'active' : ''}" type="button" data-action="category" data-category-id="">
+                                <span class="cat-name">All Categories</span>
+                            </button>
+                        </li>
+                        ${categories.map((category) => {
+                            const isCategoryActive = String(category.id) === currentCategoryId;
+                            const subcategories = Array.isArray(category.subcategories) ? category.subcategories : [];
+
+                            return `
+                                <li class="cat-item ${isCategoryActive ? 'open' : ''}">
+                                    <button class="cat-row ${isCategoryActive ? 'active' : ''}" type="button" data-action="category" data-category-id="${esc(category.id)}">
+                                        <span class="cat-arrow" aria-hidden="true">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                <polyline points="9 18 15 12 9 6"></polyline>
+                                            </svg>
+                                        </span>
+                                        <span class="cat-name">${esc(category.name)}</span>
+                                    </button>
+                                    <ul class="sub-list">
+                                        <li class="sub-item ${isCategoryActive && currentSubcategoryId === '' ? 'is-selected-root' : ''}">
+                                            <button class="sub-row ${isCategoryActive && currentSubcategoryId === '' ? 'active' : ''}" type="button" data-action="subcategory" data-category-id="${esc(category.id)}" data-subcategory-id="">
+                                                <span class="sub-name">All ${esc(category.name)}</span>
+                                            </button>
+                                        </li>
+                                        ${subcategories.map((subcategory) => {
+                                            const isSubcategoryActive = String(subcategory.id) === currentSubcategoryId;
+                                            const grandchilds = Array.isArray(subcategory.grandchilds) ? subcategory.grandchilds : [];
+
+                                            return `
+                                                <li class="sub-item ${isSubcategoryActive ? 'open' : ''}">
+                                                    <button class="sub-row ${isSubcategoryActive ? 'active' : ''}" type="button" data-action="subcategory" data-category-id="${esc(category.id)}" data-subcategory-id="${esc(subcategory.id)}">
+                                                        <span class="sub-arrow" aria-hidden="true">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                                <polyline points="9 18 15 12 9 6"></polyline>
+                                                            </svg>
+                                                        </span>
+                                                        <span class="sub-name">${esc(subcategory.name)}</span>
+                                                    </button>
+                                                    <ul class="subsub-list">
+                                                        <li>
+                                                            <button class="subsub-row ${isSubcategoryActive && currentGrandchildId === '' ? 'active' : ''}" type="button" data-action="grandchild" data-category-id="${esc(category.id)}" data-subcategory-id="${esc(subcategory.id)}" data-grandchild-id="">
+                                                                <span class="subsub-name">All ${esc(subcategory.name)}</span>
+                                                            </button>
+                                                        </li>
+                                                        ${grandchilds.map((grandchild) => `
+                                                            <li>
+                                                                <button class="subsub-row ${String(grandchild.id) === currentGrandchildId ? 'active' : ''}" type="button" data-action="grandchild" data-category-id="${esc(category.id)}" data-subcategory-id="${esc(subcategory.id)}" data-grandchild-id="${esc(grandchild.id)}">
+                                                                    <span class="subsub-name">${esc(grandchild.name)}</span>
+                                                                </button>
+                                                            </li>
+                                                        `).join('')}
+                                                    </ul>
+                                                </li>
+                                            `;
+                                        }).join('')}
+                                    </ul>
+                                </li>
+                            `;
+                        }).join('')}
+                    </ul>
+                `;
+
+                filterTree.innerHTML = html;
+            }
+
+            function productCardTemplate(product) {
+                const imageUrl = product.image_url || `https://picsum.photos/seed/product-${product.id}/900/650`;
+                const safeTitle = esc(product.title || '');
+                const safeDescription = esc(String(product.description || '').slice(0, 140)) + (String(product
+                    .description || '').length > 140 ? '...' : '');
+                const safeCategory = esc(product.category_name || 'N/A');
+                const safeSubcategory = esc(product.subcategory_name || 'N/A');
+                const safeGrandchild = esc(product.grandchild_name || 'N/A');
+                const safeProductUrl = esc(product.product_url || '#');
+                const safeImageUrl = esc(imageUrl);
+                const imageLabel = safeGrandchild !== 'N/A' ? safeGrandchild : safeSubcategory;
+
+                return `
+                    <a class="prod-card product-card-link" href="${safeProductUrl}">
+                        <article>
+                            <div class="prod-img">
+                                <img src="${safeImageUrl}" alt="${safeTitle}">
+                                <span class="prod-img-label">${imageLabel}</span>
+                            </div>
+                            <div class="prod-body">
+                                <p class="prod-cat">${safeCategory} / ${safeSubcategory}</p>
+                                <h3 class="prod-name">${safeTitle}</h3>
+                                <p class="prod-model">${safeGrandchild}</p>
+                                <p class="prod-desc">${safeDescription}</p>
+                                <div class="prod-footer">
+                                    <div class="prod-meta">
+                                        <span>${safeCategory}</span>
+                                        <span>${safeGrandchild}</span>
+                                    </div>
+                                    <span class="prod-btn">Details</span>
+                                </div>
+                            </div>
+                        </article>
+                    </a>
+                `;
+            }
+
+            function renderProducts(products) {
+                if (!products.length) {
+                    productsGrid.innerHTML = `
+                        <div class="no-results">
+                            <h3>No products found</h3>
+                            <p>Try clearing the current filters or selecting a different category path.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                productsGrid.innerHTML = products.map(productCardTemplate).join('');
+                setView(currentView);
+            }
+
             async function fetchProducts() {
                 try {
                     errorBox.classList.add('d-none');
@@ -241,7 +337,7 @@
 
                     const response = await fetch(`${fetchUrl}?${params.toString()}`, {
                         headers: {
-                            'Accept': 'application/json'
+                            Accept: 'application/json',
                         },
                     });
 
@@ -250,59 +346,113 @@
                     }
 
                     const data = await response.json();
-                    renderProducts(data.products || []);
-                    resultsCount.textContent = `${data.count ?? 0} Products`;
-
                     const selected = data.selected || {};
+
                     currentCategoryId = selected.category_id ? String(selected.category_id) : '';
                     currentSubcategoryId = selected.subcategory_id ? String(selected.subcategory_id) : '';
                     currentGrandchildId = selected.grandchild_id ? String(selected.grandchild_id) : '';
 
-                    renderSubcategoryTree(currentCategoryId, currentSubcategoryId, currentGrandchildId);
+                    productCount.textContent = String(data.count ?? 0);
+                    renderFilterTree();
+                    renderActiveTags();
+                    renderProducts(data.products || []);
                     syncUrl();
+                    closeSidebar();
                 } catch (err) {
                     errorBox.textContent = 'Failed to update products. Please try again.';
                     errorBox.classList.remove('d-none');
                 }
             }
 
-            categoryGroup.addEventListener('change', (event) => {
-                if (!event.target.classList.contains('category-check')) return;
-                currentCategoryId = event.target.value;
-                currentSubcategoryId = '';
-                currentGrandchildId = '';
-                renderSubcategoryTree(currentCategoryId);
-                fetchProducts();
-            });
-
-            subcategoryGroup.addEventListener('change', (event) => {
-                if (event.target.classList.contains('subcategory-check')) {
-                    currentSubcategoryId = event.target.value;
+            function clearFromLevel(level) {
+                if (level === 'category') {
+                    currentCategoryId = '';
+                    currentSubcategoryId = '';
                     currentGrandchildId = '';
-                    renderSubcategoryTree(currentCategoryId, currentSubcategoryId, currentGrandchildId);
+                    return;
+                }
+
+                if (level === 'subcategory') {
+                    currentSubcategoryId = '';
+                    currentGrandchildId = '';
+                    return;
+                }
+
+                if (level === 'grandchild') {
+                    currentGrandchildId = '';
+                }
+            }
+
+            function openSidebar() {
+                productsSidebar.classList.add('open');
+                sidebarOverlay.classList.add('open');
+                document.body.classList.add('products-sidebar-open');
+            }
+
+            function closeSidebar() {
+                productsSidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('open');
+                document.body.classList.remove('products-sidebar-open');
+            }
+
+            filterTree.addEventListener('click', (event) => {
+                const trigger = event.target.closest('[data-action]');
+                if (!trigger) return;
+
+                const action = trigger.dataset.action;
+                const categoryId = trigger.dataset.categoryId ?? '';
+                const subcategoryId = trigger.dataset.subcategoryId ?? '';
+                const grandchildId = trigger.dataset.grandchildId ?? '';
+
+                if (action === 'category') {
+                    currentCategoryId = categoryId;
+                    currentSubcategoryId = '';
+                    currentGrandchildId = '';
                     fetchProducts();
                     return;
                 }
 
-                if (event.target.classList.contains('grandchild-check')) {
-                    currentGrandchildId = event.target.value;
+                if (action === 'subcategory') {
+                    currentCategoryId = categoryId;
+                    currentSubcategoryId = subcategoryId;
+                    currentGrandchildId = '';
+                    fetchProducts();
+                    return;
+                }
+
+                if (action === 'grandchild') {
+                    currentCategoryId = categoryId;
+                    currentSubcategoryId = subcategoryId;
+                    currentGrandchildId = grandchildId;
                     fetchProducts();
                 }
+            });
+
+            activeTags.addEventListener('click', (event) => {
+                const button = event.target.closest('[data-clear-level]');
+                if (!button) return;
+
+                clearFromLevel(button.dataset.clearLevel);
+                fetchProducts();
             });
 
             clearBtn.addEventListener('click', () => {
                 currentCategoryId = '';
                 currentSubcategoryId = '';
                 currentGrandchildId = '';
-
-                const allCategoriesOption = categoryGroup.querySelector('input[value=""]');
-                if (allCategoriesOption) allCategoriesOption.checked = true;
-
-                renderSubcategoryTree('');
                 fetchProducts();
             });
 
-            renderSubcategoryTree(currentCategoryId, currentSubcategoryId, currentGrandchildId);
+            openSidebarBtn?.addEventListener('click', openSidebar);
+            sidebarCloseBtn?.addEventListener('click', closeSidebar);
+            sidebarOverlay?.addEventListener('click', closeSidebar);
+
+            gridBtn.addEventListener('click', () => setView('grid'));
+            listBtn.addEventListener('click', () => setView('list'));
+
+            renderFilterTree();
+            renderActiveTags();
+            setView('grid');
             fetchProducts();
         })();
     </script>
