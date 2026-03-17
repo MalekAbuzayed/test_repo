@@ -463,7 +463,7 @@
             <div class="landing-hero__content reveal">
                 <p class="landing-eyebrow">Exclusive GoodWe Partner</p>
                 <h1 class="landing-title">TRISS</h1>
-                <p class="landing-subtitle">GoodWe exclusive agent in the Middle East</p>
+                <p class="landing-subtitle">GoodWe exclusive agent in Jordan</p>
                 <p class="landing-desc">
                     Powering the future of solar energy across the region with premium inverter solutions, technical
                     support, and market expertise tailored to demanding conditions.
@@ -513,7 +513,7 @@
                     </div>
                 </div>
 
-                <div class="stats-grid-triss">
+                {{-- <div class="stats-grid-triss">
                     <div class="reveal">
                         <div class="stat-value">10+</div>
                         <div class="stat-copy">Years of Experience</div>
@@ -530,7 +530,7 @@
                         <div class="stat-value">99%</div>
                         <div class="stat-copy">Partner Satisfaction</div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </section>
 

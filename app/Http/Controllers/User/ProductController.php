@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use ZipArchive;
+use App\Support\ZipArchiveFactory;
 
 class ProductController extends Controller
 {
@@ -243,7 +243,7 @@ class ProductController extends Controller
         return response()->download($fullPath, $downloadName);
     }
 
-    public function downloadAll(Request $request)
+    public function downloadAll(Request $request, ZipArchiveFactory $zipArchiveFactory)
     {
         $product = $this->resolveProductFromRequest($request);
         if (!$product) {
@@ -263,6 +263,14 @@ class ProductController extends Controller
                 : redirect()->back()->with('danger', 'No files available for download.');
         }
 
+        if (! $zipArchiveFactory->isAvailable()) {
+            $message = 'ZIP downloads are temporarily unavailable. Server ZIP support is not installed.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 503)
+                : redirect()->back()->with('danger', $message);
+        }
+
         $tempDir = storage_path('app/temp');
         if (!is_dir($tempDir)) {
             mkdir($tempDir, 0755, true);
@@ -271,8 +279,8 @@ class ProductController extends Controller
         $zipFilename = 'product-' . $product->id . '-files.zip';
         $zipPath = $tempDir . DIRECTORY_SEPARATOR . Str::uuid() . '-' . $zipFilename;
 
-        $zip = new ZipArchive();
-        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+        $zip = $zipArchiveFactory->make();
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
             return $request->expectsJson()
                 ? response()->json(['message' => 'Failed to prepare zip file.'], 500)
                 : redirect()->back()->with('danger', 'Failed to prepare zip file.');
