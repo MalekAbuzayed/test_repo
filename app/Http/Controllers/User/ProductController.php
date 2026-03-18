@@ -93,30 +93,48 @@ class ProductController extends Controller
             $request->query('file_type')
         );
 
+        $categoryProductCounts = $this->activeProductCountMap('category_id');
         $categories = $this->activeCategoriesTree()
             ->map(fn(Category $category) => [
                 'id' => $category->id,
                 'name' => $category->name,
+                'count' => (int) ($categoryProductCounts[$category->id] ?? 0),
             ])
             ->values();
 
         $subcategories = collect();
         if (!empty($selected['category_id'])) {
+            $subcategoryProductCounts = $this->activeProductCountMap('subcategory_id');
+            $subcategoryGrandchildCounts = $this->activeGrandchildCountMap();
             $subcategories = Subcategory::query()
                 ->where('category_id', $selected['category_id'])
                 ->where($this->activeStatusCondition())
                 ->orderBy('name')
-                ->get(['id', 'name']);
+                ->get(['id', 'name'])
+                ->map(fn(Subcategory $subcategory) => [
+                    'id' => $subcategory->id,
+                    'name' => $subcategory->name,
+                    'count' => (int) ($subcategoryProductCounts[$subcategory->id] ?? 0),
+                    'grandchild_count' => (int) ($subcategoryGrandchildCounts[$subcategory->id] ?? 0),
+                ])
+                ->values();
         }
 
         $grandchilds = collect();
         $grandchildSelectionRequired = false;
         if (!empty($selected['subcategory_id'])) {
+            $grandchildProductCounts = $this->activeProductCountMap('grandchild_id');
             $grandchilds = Grandchild::query()
                 ->where('subcategory_id', $selected['subcategory_id'])
                 ->where($this->activeStatusCondition())
                 ->orderBy('name')
-                ->get(['id', 'name']);
+                ->get(['id', 'name'])
+                ->map(fn(Grandchild $grandchild) => [
+                    'id' => $grandchild->id,
+                    'name' => $grandchild->name,
+                    'count' => (int) ($grandchildProductCounts[$grandchild->id] ?? 0),
+                ])
+                ->values();
             $grandchildSelectionRequired = $grandchilds->isNotEmpty();
         }
 
@@ -129,10 +147,7 @@ class ProductController extends Controller
                 $selected['category_id'],
                 $selected['subcategory_id'],
                 $selected['grandchild_id']
-            )->map(fn(Product $product) => [
-                'id' => $product->id,
-                'name' => $product->title,
-            ])->values();
+            )->values();
         }
 
         $fileTypes = [];
@@ -147,6 +162,10 @@ class ProductController extends Controller
                 : null;
         }
 
+        $selectedFileType = $selected['file_type']
+            ? collect($fileTypes)->firstWhere('id', $selected['file_type'])
+            : null;
+
         return response()->json([
             'selected' => [
                 'category_id' => $selected['category_id'],
@@ -154,6 +173,13 @@ class ProductController extends Controller
                 'grandchild_id' => $selected['grandchild_id'],
                 'product_id' => $selected['product_id'],
                 'file_type' => $selected['file_type'],
+            ],
+            'selected_labels' => [
+                'category_name' => $selected['category']?->name,
+                'subcategory_name' => $selected['subcategory']?->name,
+                'grandchild_name' => $selected['grandchild']?->name,
+                'product_name' => $selected['product']?->title,
+                'file_type_name' => $selectedFileType['name'] ?? null,
             ],
             'categories' => $categories,
             'subcategories' => $subcategories->values(),
@@ -607,6 +633,9 @@ class ProductController extends Controller
                 'title' => $file->title ?: basename($file->path),
                 'mime_type' => $file->mime_type,
                 'size_bytes' => (int) $file->size_bytes,
+                'size_label' => $this->formatBytes((int) $file->size_bytes),
+                'updated_label' => optional($file->updated_at)->format('M Y'),
+                'extension' => $this->fileExtensionLabel($file),
                 'download_url' => route('product.files.download', ['file' => $file->id, 'id' => $product->id]),
             ];
         }
@@ -617,12 +646,34 @@ class ProductController extends Controller
 
     private function activeProductsForDownloadCenter(?int $categoryId, ?int $subcategoryId, ?int $grandchildId)
     {
-        return $this->applyProductFilters(
-            Product::query()->where($this->activeStatusCondition())->orderBy('title'),
+        $products = $this->applyProductFilters(
+            Product::query()
+                ->with([
+                    'grandchild:id,name',
+                    'subcategory:id,name',
+                ])
+                ->where($this->activeStatusCondition())
+                ->orderBy('title'),
             $categoryId,
             $subcategoryId,
             $grandchildId
-        )->get(['id', 'title']);
+        )->get(['id', 'title', 'subcategory_id', 'grandchild_id']);
+
+        $fileCounts = ProductFile::query()
+            ->selectRaw('product_id, COUNT(*) as aggregate_count')
+            ->whereIn('product_id', $products->pluck('id'))
+            ->where('type', '!=', 'image')
+            ->where($this->activeStatusCondition())
+            ->groupBy('product_id')
+            ->pluck('aggregate_count', 'product_id');
+
+        return $products->map(fn(Product $product) => [
+            'id' => $product->id,
+            'name' => $product->title,
+            'count' => (int) ($fileCounts[$product->id] ?? 0),
+            'grandchild_name' => $product->grandchild?->name,
+            'subcategory_name' => $product->subcategory?->name,
+        ]);
     }
 
     private function resolveDownloadCenterSelection(
@@ -635,6 +686,30 @@ class ProductController extends Controller
         $selected = $this->resolveSelectedFilters($categoryInput, $subcategoryInput, $grandchildInput);
         $productId = $this->normalizeId($productInput);
         $product = null;
+        $category = null;
+        $subcategory = null;
+        $grandchild = null;
+
+        if (!empty($selected['category_id'])) {
+            $category = Category::query()
+                ->where('id', $selected['category_id'])
+                ->where($this->activeStatusCondition())
+                ->first(['id', 'name']);
+        }
+
+        if (!empty($selected['subcategory_id'])) {
+            $subcategory = Subcategory::query()
+                ->where('id', $selected['subcategory_id'])
+                ->where($this->activeStatusCondition())
+                ->first(['id', 'name']);
+        }
+
+        if (!empty($selected['grandchild_id'])) {
+            $grandchild = Grandchild::query()
+                ->where('id', $selected['grandchild_id'])
+                ->where($this->activeStatusCondition())
+                ->first(['id', 'name']);
+        }
 
         $grandchildSelectionRequired = false;
         if (!empty($selected['subcategory_id'])) {
@@ -650,6 +725,13 @@ class ProductController extends Controller
 
         if (!empty($productId)) {
             $product = Product::query()
+                ->with([
+                    'files' => function ($q) {
+                        $q->where($this->activeStatusCondition())
+                            ->orderBy('sort_order')
+                            ->orderBy('id');
+                    },
+                ])
                 ->where('id', $productId)
                 ->where($this->activeStatusCondition())
                 ->first(['id', 'category_id', 'subcategory_id', 'grandchild_id', 'title']);
@@ -688,6 +770,9 @@ class ProductController extends Controller
             'subcategory_id' => $selected['subcategory_id'],
             'grandchild_id' => $selected['grandchild_id'],
             'product_id' => $productId,
+            'category' => $category,
+            'subcategory' => $subcategory,
+            'grandchild' => $grandchild,
             'product' => $product,
             'file_type' => $fileType,
         ];
@@ -705,10 +790,14 @@ class ProductController extends Controller
             [[
                 'id' => '__all__',
                 'name' => 'All Files',
+                'count' => array_sum(array_map(fn(array $typeBlock) => count($typeBlock['files']), array_values($filesByType))),
+                'extension' => 'ALL',
             ]],
             array_map(fn(array $typeBlock) => [
                 'id' => $typeBlock['type'],
                 'name' => $typeBlock['label'],
+                'count' => count($typeBlock['files']),
+                'extension' => strtoupper(substr($typeBlock['files'][0]['extension'] ?? $typeBlock['type'], 0, 4)),
             ], array_values($filesByType))
         ));
     }
@@ -750,6 +839,9 @@ class ProductController extends Controller
                 'title' => $file->title ?: basename($file->path),
                 'mime_type' => $file->mime_type,
                 'size_bytes' => (int) $file->size_bytes,
+                'size_label' => $this->formatBytes((int) $file->size_bytes),
+                'updated_label' => optional($file->updated_at)->format('M Y'),
+                'extension' => $this->fileExtensionLabel($file),
                 'download_url' => route('product.files.download', ['file' => $file->id, 'id' => $file->product_id]),
             ];
         }, $files);
@@ -758,6 +850,52 @@ class ProductController extends Controller
     private function humanizeFileType(string $type): string
     {
         return ucwords(str_replace('_', ' ', $type));
+    }
+
+    private function activeProductCountMap(string $column): array
+    {
+        return Product::query()
+            ->selectRaw($column . ' as aggregate_key, COUNT(*) as aggregate_count')
+            ->whereNotNull($column)
+            ->where($this->activeStatusCondition())
+            ->groupBy($column)
+            ->pluck('aggregate_count', 'aggregate_key')
+            ->map(fn($count) => (int) $count)
+            ->all();
+    }
+
+    private function activeGrandchildCountMap(): array
+    {
+        return Grandchild::query()
+            ->selectRaw('subcategory_id as aggregate_key, COUNT(*) as aggregate_count')
+            ->where($this->activeStatusCondition())
+            ->groupBy('subcategory_id')
+            ->pluck('aggregate_count', 'aggregate_key')
+            ->map(fn($count) => (int) $count)
+            ->all();
+    }
+
+    private function fileExtensionLabel(ProductFile $file): string
+    {
+        $extension = pathinfo($file->title ?: $file->path, PATHINFO_EXTENSION);
+        if (!$extension) {
+            return strtoupper(substr((string) $file->type, 0, 4));
+        }
+
+        return strtoupper(substr($extension, 0, 4));
+    }
+
+    private function formatBytes(int $bytes): string
+    {
+        if ($bytes <= 0) {
+            return 'Unknown size';
+        }
+
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $power = min((int) floor(log($bytes, 1024)), count($units) - 1);
+        $value = $bytes / (1024 ** $power);
+
+        return number_format($value, $power === 0 ? 0 : 1) . ' ' . $units[$power];
     }
 
     private function normalizeId($value): ?int
