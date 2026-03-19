@@ -138,6 +138,21 @@ class SpecTemplateSeeder extends Seeder
                     ['key' => 'depth_of_discharge', 'label' => 'Depth of Discharge', 'unit' => null, 'data_type' => 'text', 'is_key' => true, 'sort_order' => 10],
                 ]],
             ],
+
+            'All in one' => [
+                ['title' => 'General Specefications', 'sort_order' => 1, 'fields' => [
+                    ['key' => 'rated_energy', 'label' => 'Rated Energy (kWh)', 'unit' => 'kWh', 'data_type' => 'number', 'is_key' => true, 'sort_order' => 1],
+                    ['key' => 'usable_energy', 'label' => 'Usable Energy (kWh)', 'unit' => 'kWh', 'data_type' => 'number', 'is_key' => false, 'sort_order' => 2],
+                    ['key' => 'nominal_voltage', 'label' => 'Nominal Voltage (V)', 'unit' => 'V', 'data_type' => 'number', 'is_key' => true, 'sort_order' => 3],
+                    ['key' => 'max_continuous_charging_power', 'label' => 'Max. Continuous Charging Power (kW)', 'unit' => 'kW', 'data_type' => 'number', 'is_key' => false, 'sort_order' => 4],
+                    ['key' => 'max_continuous_discharging_power', 'label' => 'Max. Continuous Discharging Power (kW)', 'unit' => 'kW', 'data_type' => 'number', 'is_key' => false, 'sort_order' => 5],
+                    ['key' => 'peak_output_power', 'label' => 'Peak Output Power (kW)', 'unit' => 'kW', 'data_type' => 'number', 'is_key' => true, 'sort_order' => 6],
+                    ['key' => 'cycle_lifespan', 'label' => 'Cycle Lifespan', 'unit' => null, 'data_type' => 'text', 'is_key' => true, 'sort_order' => 7],
+                    ['key' => 'ip_rating', 'label' => 'IP Rating', 'unit' => null, 'data_type' => 'text', 'is_key' => false, 'sort_order' => 8],
+                    ['key' => 'round_trip_efficiency', 'label' => 'Round Trip Efficiency', 'unit' => null, 'data_type' => 'text', 'is_key' => true, 'sort_order' => 9],
+                    ['key' => 'depth_of_discharge', 'label' => 'Depth of Discharge', 'unit' => null, 'data_type' => 'text', 'is_key' => true, 'sort_order' => 10],
+                ]],
+            ],
         ];
 
         DB::transaction(function () use ($templates) {
