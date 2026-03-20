@@ -231,11 +231,11 @@
                         </div>
                         <dl class="spec-group-list">
                             ${(group.fields || []).map(field => `
-                                                            <div class="spec-group-item">
-                                                                <dt>${esc(field.label)}</dt>
-                                                                <dd>${esc(field.value)}${field.unit ? ` <span class="key-spec-unit">${esc(field.unit)}</span>` : ''}</dd>
-                                                            </div>
-                                                        `).join('')}
+                                                                    <div class="spec-group-item">
+                                                                        <dt>${esc(field.label)}</dt>
+                                                                        <dd>${esc(field.value)}${field.unit ? ` <span class="key-spec-unit">${esc(field.unit)}</span>` : ''}</dd>
+                                                                    </div>
+                                                                `).join('')}
                         </dl>
                     </div>
                 `).join('');
@@ -279,11 +279,11 @@
                 const listHtml = `
                     <div class="download-list">
                         ${files.map(file => `
-                                                        <a class="download-item" href="${esc(file.download_url)}">
-                                                            <span class="download-item-title">${esc(file.title || 'Download File')}</span>
-                                                            <span class="download-item-meta">${esc(file.mime_type || 'File')}</span>
-                                                        </a>
-                                                    `).join('')}
+                                                                <a class="download-item" href="${esc(file.download_url)}">
+                                                                    <span class="download-item-title">${esc(file.title || 'Download File')}</span>
+                                                                    <span class="download-item-meta">${esc(file.mime_type || 'File')}</span>
+                                                                </a>
+                                                            `).join('')}
                     </div>
                 `;
 
@@ -395,7 +395,7 @@
             if (ipBadge) {
                 window.setTimeout(() => {
                     ipBadge.classList.add('is-visible');
-                }, 1000);
+                }, 1500);
             }
 
             setActivePanel(null);

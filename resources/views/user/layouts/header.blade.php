@@ -11,7 +11,7 @@
         <div class="nav-inner">
             <a class="nav-logo" href="{{ route('index') }}" aria-label="TRISS home">
                 <span class="nav-logo-mark">
-                    <img src="{{ asset('style_files/images/logo.png') }}" alt="TRISS logo">
+                    <img src="{{ asset('style_files/user/logo.png') }}" alt="TRISS logo">
                 </span>
                 <span class="nav-logo-copy">
                     <strong>TRISS</strong>
@@ -39,7 +39,8 @@
                     <div class="nav-dropdown-menu" id="productsDropdown" aria-label="Products categories">
                         <div class="nav-dropdown-shell">
                             <div class="nav-dropdown-all">
-                                <a class="nav-sub-link nav-sub-link--all" href="{{ route('products') }}">All Products</a>
+                                <a class="nav-sub-link nav-sub-link--all" href="{{ route('products') }}">All
+                                    Products</a>
                             </div>
 
                             <div class="nav-dropdown-grid">
@@ -61,7 +62,8 @@
                                 @empty
                                     <div class="nav-dropdown-group nav-dropdown-group--empty">
                                         <h4 class="nav-dropdown-heading">No Categories</h4>
-                                        <span class="nav-sub-link nav-sub-link--muted">No product filters available.</span>
+                                        <span class="nav-sub-link nav-sub-link--muted">No product filters
+                                            available.</span>
                                     </div>
                                 @endforelse
                             </div>
